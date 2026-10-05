@@ -1,0 +1,126 @@
+<app-demo-page num="023" [snippets]="snippets">
+  <section class="demo-card" aria-labelledby="measure-title">
+    <h3 id="measure-title">How to measure</h3>
+    <mat-stepper orientation="vertical" [linear]="false">
+      <mat-step label="Build with stats">
+        <app-code-viewer
+          file="terminal"
+          language="bash"
+          [code]="'npm run analyze\n# = ' + scripts['analyze']"
+        />
+        <p class="demo-hint">
+          Then drop <code>dist/angular22-video-demos/browser-stats.json</code> on
+          https://esbuild.github.io/analyze/.
+        </p>
+      </mat-step>
+      <mat-step label="Or use source maps">
+        <app-code-viewer
+          file="terminal"
+          language="bash"
+          [code]="'npm run analyze:sme\n# = ' + scripts['analyze:sme']"
+        />
+      </mat-step>
+      <mat-step label="Find the big boxes">
+        <p>
+          Look for whole libraries where you only need one function, CommonJS packages (not
+          tree-shakable), side-effect imports and duplicated dependencies.
+        </p>
+      </mat-step>
+      <mat-step label="Fix & re-measure">
+        <p>
+          Import precisely, prefer ESM, replace heavy libraries with native APIs and move the rest
+          behind <code>&#64;defer</code> or <code>import()</code>. Then build again and compare.
+        </p>
+      </mat-step>
+    </mat-stepper>
+  </section>
+
+  <div class="demo-grid">
+    <section class="demo-card" aria-labelledby="budget-title">
+      <h3 id="budget-title">Budgets in this project (angular.json)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Type</th>
+            <th scope="col">Warning</th>
+            <th scope="col">Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of budgets; track b.type) {
+            <tr>
+              <td>
+                <code>{{ b.type }}</code>
+              </td>
+              <td>{{ b.maximumWarning }}</td>
+              <td>{{ b.maximumError }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <p class="demo-hint">
+        Read at build time from angular.json – a broken budget fails <code>ng build</code>.
+      </p>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="import-title">
+      <h3 id="import-title">Load on demand with import()</h3>
+      <button mat-flat-button type="button" (click)="loadHeavyModule()" [disabled]="loading()">
+        {{ loading() ? 'Loading…' : 'Load heavy module' }}
+      </button>
+      @if (loaded(); as r) {
+        <div class="demo-row" aria-live="polite">
+          <app-metric-tile label="Load + run" [value]="r.ms" unit="ms" />
+          <app-metric-tile label="Primes < 200,000" [value]="r.primes.toLocaleString('en')" />
+        </div>
+        <p class="demo-hint">
+          Chunk: <code>{{ r.chunk }}</code> (second click: already cached)
+        </p>
+      }
+    </section>
+  </div>
+
+  <section class="demo-card" aria-labelledby="intl-title">
+    <h3 id="intl-title">Native instead of library: Intl</h3>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Locale</mat-label>
+      <mat-select [value]="locale()" (selectionChange)="locale.set($event.value)">
+        @for (l of locales; track l) {
+          <mat-option [value]="l">{{ l }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <table class="intl">
+      <tbody>
+        @for (s of samples(); track s.api) {
+          <tr>
+            <th scope="row">
+              <code>{{ s.api }}</code>
+            </th>
+            <td [attr.lang]="locale()">{{ s.output }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <h4>Typical library sizes</h4>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Library</th>
+          <th scope="col">Size</th>
+          <th scope="col">Native alternative</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (lib of libraries; track lib.library) {
+          <tr>
+            <td>{{ lib.library }}</td>
+            <td>{{ lib.approx }}</td>
+            <td>{{ lib.native }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <p class="demo-hint">Approximate – check bundlephobia.com for current numbers.</p>
+  </section>
+</app-demo-page>

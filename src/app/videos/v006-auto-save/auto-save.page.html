@@ -1,0 +1,73 @@
+<app-demo-page num="006" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="demo-grid">
+    <form class="demo-card demo-stack" novalidate aria-labelledby="profile-title">
+      <div class="head">
+        <h3 id="profile-title">Profile settings</h3>
+        <mat-slide-toggle [checked]="autoSave()" (change)="autoSave.set($event.checked)">
+          Auto-save
+        </mat-slide-toggle>
+      </div>
+
+      <p class="status" [class]="status()" role="status">
+        @switch (status()) {
+          @case ('saving') {
+            <mat-icon aria-hidden="true">sync</mat-icon> Saving…
+          }
+          @case ('failed') {
+            <mat-icon aria-hidden="true">error</mat-icon> Save failed –
+            <button mat-button type="button" (click)="saveNow()">retry</button>
+          }
+          @case ('dirty') {
+            <mat-icon aria-hidden="true">edit</mat-icon> Unsaved changes
+          }
+          @case ('saved') {
+            <mat-icon aria-hidden="true">cloud_done</mat-icon> Saved at
+            {{ savedAt() | date: 'HH:mm:ss' }}
+          }
+          @default {
+            <mat-icon aria-hidden="true">check</mat-icon> All changes saved
+          }
+        }
+      </p>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Display name</mat-label>
+        <input matInput [formField]="profile.displayName" />
+        @if (profile.displayName().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Bio</mat-label>
+        <textarea matInput rows="3" [formField]="profile.bio"></textarea>
+        <mat-hint align="end">{{ model().bio.length }} / 160</mat-hint>
+        @if (profile.bio().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Language</mat-label>
+        <mat-select [formField]="profile.language">
+          @for (lang of languages; track lang.code) {
+            <mat-option [value]="lang.code">{{ lang.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-slide-toggle [formField]="profile.notifications">Email notifications</mat-slide-toggle>
+
+      <div class="demo-row">
+        <button mat-flat-button type="button" [disabled]="!canSave()" (click)="saveNow()">
+          Save now
+        </button>
+        <a mat-stroked-button routerLink="/">Leave this page</a>
+      </div>
+      <p class="demo-hint">
+        dirty: <strong>{{ profile().dirty() }}</strong> · touched:
+        <strong>{{ profile().touched() }}</strong> · valid: <strong>{{ profile().valid() }}</strong
+        >. Leaving while dirty asks for confirmation (canDeactivate guard). Raise the error rate in
+        the Network panel to see failed saves.
+      </p>
+    </form>
+    <app-event-log title="Save calls" [entries]="log.entries()" (cleared)="log.clear()" />
+  </div>
+</app-demo-page>

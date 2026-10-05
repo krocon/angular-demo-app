@@ -1,0 +1,103 @@
+<app-demo-page num="015" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="demo-grid">
+    <section class="demo-card" aria-labelledby="cart-title">
+      <h3 id="cart-title">Cart</h3>
+      @let items = cart();
+      @let subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      @let tax = subtotal * taxRate;
+      @let total = subtotal + tax;
+      @let isFreeShipping = subtotal >= freeShippingFrom;
+
+      <ul class="items">
+        @for (item of items; track item.id) {
+          @let lineTotal = item.price * item.quantity;
+          <li>
+            <span class="name">{{ item.name }}</span>
+            <span class="qty">
+              <button
+                mat-icon-button
+                type="button"
+                (click)="change(item.id, -1)"
+                [attr.aria-label]="'Less ' + item.name"
+              >
+                <mat-icon>remove</mat-icon>
+              </button>
+              <input
+                #qty
+                type="number"
+                min="0"
+                max="99"
+                [value]="item.quantity"
+                (input)="setQuantity(item.id, qty.value)"
+                [attr.aria-label]="'Quantity of ' + item.name"
+              />
+              <button
+                mat-icon-button
+                type="button"
+                (click)="change(item.id, 1)"
+                [attr.aria-label]="'More ' + item.name"
+              >
+                <mat-icon>add</mat-icon>
+              </button>
+            </span>
+            <span class="amount">{{ lineTotal | currency: 'EUR' }}</span>
+          </li>
+        }
+      </ul>
+      <dl class="sums">
+        <dt>Subtotal</dt>
+        <dd>{{ subtotal | currency: 'EUR' }}</dd>
+        <dt>Tax ({{ taxRate * 100 }} %)</dt>
+        <dd>{{ tax | currency: 'EUR' }}</dd>
+        <dt>Shipping</dt>
+        <dd>{{ isFreeShipping ? 'free' : (4.9 | currency: 'EUR') }}</dd>
+        <dt class="total">Total</dt>
+        <dd class="total">{{ total + (isFreeShipping ? 0 : 4.9) | currency: 'EUR' }}</dd>
+      </dl>
+      <p class="banner" [class.ok]="isFreeShipping" aria-live="polite">
+        @if (isFreeShipping) {
+          🎉 Free shipping unlocked!
+        } @else {
+          Add {{ freeShippingFrom - subtotal | currency: 'EUR' }} for free shipping.
+        }
+      </p>
+    </section>
+
+    <div class="demo-stack">
+      <section class="demo-card" aria-labelledby="ticker-title">
+        <h3 id="ticker-title">&#64;let + async pipe</h3>
+        @let ticker = price$ | async;
+        <p class="ticker">
+          NG/EUR <strong>{{ ticker }}</strong>
+          <span class="demo-hint"
+            >(used twice: {{ ticker !== null && ticker > 100 ? 'up' : 'down' }})</span
+          >
+        </p>
+        <p class="demo-hint">
+          No <code>*ngIf="price$ | async as ticker"</code> – and a value of 0 would still render.
+        </p>
+      </section>
+
+      <section class="demo-card rules" aria-labelledby="rules-title">
+        <h3 id="rules-title">Rules</h3>
+        <ul>
+          <li><strong>Read-only:</strong> you can't assign to a &#64;let in an event handler.</li>
+          <li><strong>Block-scoped:</strong> the same name in two blocks is two variables:</li>
+        </ul>
+        <div class="blocks">
+          @if (true) {
+            @let label = 'from block A';
+            <code>{{ label }}</code>
+          }
+          @if (true) {
+            @let label = 'from block B';
+            <code>{{ label }}</code>
+          }
+        </div>
+        <p class="demo-hint">
+          For conditional rendering keep using &#64;if – &#64;let only names values.
+        </p>
+      </section>
+    </div>
+  </div>
+</app-demo-page>

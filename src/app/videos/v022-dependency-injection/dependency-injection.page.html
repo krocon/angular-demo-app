@@ -1,0 +1,80 @@
+<app-demo-page num="022" [snippets]="snippets">
+  <div class="layout">
+    <div class="demo-stack">
+      <section class="demo-card" aria-labelledby="config-title">
+        <h3 id="config-title">Startup config (provideAppInitializer)</h3>
+        <dl>
+          <dt>Source</dt>
+          <dd>{{ config.source() }} <code>/api/config</code></dd>
+          <dt>Load time</dt>
+          <dd>{{ config.loadMs() }} ms before the app rendered</dd>
+          <dt>Loaded at</dt>
+          <dd>{{ config.loadedAt() | date: 'HH:mm:ss' }}</dd>
+          <dt>API version</dt>
+          <dd>{{ config.config().apiVersion }}</dd>
+        </dl>
+        <h4>Feature flags</h4>
+        <ul class="flags">
+          @for (flag of config.featureList(); track flag[0]) {
+            <li>
+              <mat-slide-toggle
+                [checked]="flag[1]"
+                (change)="config.setFeature(flag[0], $event.checked)"
+              >
+                {{ flag[0] }}
+              </mat-slide-toggle>
+            </li>
+          }
+        </ul>
+        <p class="demo-hint">featureB is checked by a functional guard that uses inject().</p>
+      </section>
+
+      <section class="demo-card" aria-labelledby="cleanup-title">
+        <h3 id="cleanup-title">Route injector cleanup</h3>
+        <mat-slide-toggle [checked]="true" disabled
+          >withAutoCleanupInjectors() (since 22.2)</mat-slide-toggle
+        >
+        <p class="demo-hint">
+          Set once in <code>provideRouter(…)</code> (app.config.ts). Switch between Feature A and B:
+          the inactive route's injector – and its service – is destroyed. Without the feature the
+          services would live on until the app is destroyed.
+        </p>
+      </section>
+    </div>
+
+    <div class="demo-stack">
+      <nav class="demo-row" aria-label="Feature routes">
+        <a
+          mat-stroked-button
+          routerLink="feature-a"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          >Feature A</a
+        >
+        <a
+          mat-stroked-button
+          routerLink="feature-b"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          >Feature B</a
+        >
+        <a
+          mat-button
+          routerLink="."
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active"
+          >None</a
+        >
+      </nav>
+      <div class="outlet">
+        <router-outlet #outlet="outlet" />
+        @if (!outlet.isActivated) {
+          <p class="demo-hint">
+            Open a feature route – its FeatureSessionService is created on demand.
+          </p>
+        }
+      </div>
+      <app-event-log title="Lifecycle log" [entries]="log.entries()" (cleared)="log.clear()" />
+    </div>
+  </div>
+</app-demo-page>

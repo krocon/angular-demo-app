@@ -1,0 +1,120 @@
+<app-demo-page num="012" [snippets]="snippets">
+  @let res = active();
+  <div class="toolbar demo-card">
+    <mat-button-toggle-group
+      aria-label="Implementation"
+      [value]="implementation()"
+      (change)="implementation.set($event.value)"
+    >
+      <mat-button-toggle value="resource">resource</mat-button-toggle>
+      <mat-button-toggle value="rxResource">rxResource</mat-button-toggle>
+      <mat-button-toggle value="httpResource">httpResource</mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+      <mat-label>Search users</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput #search [value]="q()" (input)="setQuery(search.value)" />
+    </mat-form-field>
+    <span class="status-chip" [class]="res.status()" role="status">status: {{ res.status() }}</span>
+    @if (res.isLoading()) {
+      <mat-progress-spinner mode="indeterminate" diameter="24" aria-label="Loading users" />
+    }
+  </div>
+
+  <div class="layout">
+    <section class="demo-card demo-stack" aria-labelledby="users-title">
+      <h3 id="users-title">
+        Users <small>({{ total() }} found)</small>
+      </h3>
+      @if (res.error(); as error) {
+        <div class="error-box" role="alert">
+          <mat-icon aria-hidden="true">error</mat-icon>
+          <span>{{ error.message }}</span>
+          <button mat-stroked-button type="button" (click)="res.reload()">Retry</button>
+        </div>
+      } @else {
+        <ul class="users" [class.stale]="res.isLoading()">
+          @for (user of users(); track user.id) {
+            <li [class.temp]="user.id < 0">
+              <span class="avatar" aria-hidden="true">{{ user.name.charAt(0) }}</span>
+              <span class="who"
+                ><strong>{{ user.name }}</strong
+                ><small>{{ user.email }}</small></span
+              >
+              @if (user.id < 0) {
+                <span class="demo-hint">optimistic…</span>
+              }
+            </li>
+          } @empty {
+            <li class="demo-hint">{{ res.isLoading() ? 'Loading…' : 'No users.' }}</li>
+          }
+        </ul>
+      }
+      <div class="pager">
+        <button
+          mat-icon-button
+          type="button"
+          (click)="page.set(page() - 1)"
+          [disabled]="page() <= 1"
+          aria-label="Previous page"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span>Page {{ page() }} / {{ pageCount() }}</span>
+        <button
+          mat-icon-button
+          type="button"
+          (click)="page.set(page() + 1)"
+          [disabled]="page() >= pageCount()"
+          aria-label="Next page"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        <button mat-button type="button" (click)="res.reload()">reload()</button>
+      </div>
+    </section>
+
+    <div class="demo-stack">
+      <section class="demo-card demo-stack" aria-labelledby="create-title">
+        <h3 id="create-title">Create user (HttpClient.post)</h3>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Name</mat-label>
+          <input matInput [formField]="newUserForm.name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Email</mat-label>
+          <input matInput [formField]="newUserForm.email" />
+        </mat-form-field>
+        <mat-slide-toggle [checked]="optimistic()" (change)="optimistic.set($event.checked)">
+          Optimistic update (status "local")
+        </mat-slide-toggle>
+        <button mat-flat-button type="button" (click)="createUser()" [disabled]="creating()">
+          {{ creating() ? 'Saving…' : 'Create & reload()' }}
+        </button>
+      </section>
+
+      <section class="demo-card" aria-labelledby="log-title">
+        <h3 id="log-title">Request log</h3>
+        <p class="demo-hint">Type fast: outdated requests are aborted and show up as cancelled.</p>
+        <ol class="log">
+          @for (entry of requests(); track entry.id) {
+            <li [class.cancelled]="entry.cancelled">
+              <code>{{ entry.method }} {{ entry.url }}</code>
+              <span>
+                @if (entry.cancelled) {
+                  cancelled
+                } @else if (entry.status === null) {
+                  pending…
+                } @else {
+                  {{ entry.status }} · {{ entry.durationMs }} ms
+                }
+              </span>
+            </li>
+          } @empty {
+            <li class="demo-hint">No requests yet.</li>
+          }
+        </ol>
+      </section>
+    </div>
+  </div>
+</app-demo-page>

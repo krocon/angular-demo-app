@@ -1,0 +1,60 @@
+<app-demo-page num="021" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="demo-grid">
+    <section class="demo-card demo-stack" aria-labelledby="live-title">
+      <h3 id="live-title">Components under test</h3>
+      <div class="row">
+        <span>QuantityStepper</span>
+        <app-quantity-stepper
+          [min]="0"
+          [max]="max()"
+          [(value)]="quantity"
+          (limitReached)="onLimit($event)"
+        />
+      </div>
+      <p class="demo-hint">value (two-way): {{ quantity() }} · max: {{ max() }}</p>
+      <mat-button-toggle-group aria-label="max" [value]="max()" (change)="max.set($event.value)">
+        <mat-button-toggle [value]="3">max 3</mat-button-toggle>
+        <mat-button-toggle [value]="5">max 5</mat-button-toggle>
+        <mat-button-toggle [value]="10">max 10</mat-button-toggle>
+      </mat-button-toggle-group>
+      <app-event-log title="Outputs" [entries]="log.entries()" (cleared)="log.clear()" />
+      <div class="row">
+        <span>UserBadge (httpResource)</span>
+        <app-user-badge [userId]="userId()" />
+      </div>
+      <mat-button-toggle-group
+        aria-label="User"
+        [value]="userId()"
+        (change)="userId.set($event.value)"
+      >
+        @for (id of [1, 2, 3, 99999]; track id) {
+          <mat-button-toggle [value]="id">#{{ id }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </section>
+
+    <section class="demo-card" aria-labelledby="explorer-title">
+      <h3 id="explorer-title">Test explorer</h3>
+      <p class="demo-hint">
+        These tests are parsed from the real spec files – they run in <code>ng test</code>.
+      </p>
+      @for (spec of specs; track spec.file) {
+        <h4>
+          <code>{{ spec.file }}</code> – {{ spec.suite }}
+        </h4>
+        <mat-accordion>
+          @for (test of spec.tests; track test.name) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>✓ {{ test.name }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <ng-template matExpansionPanelContent>
+                <app-code-viewer [file]="spec.file" [code]="test.code" />
+              </ng-template>
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+      }
+    </section>
+  </div>
+</app-demo-page>

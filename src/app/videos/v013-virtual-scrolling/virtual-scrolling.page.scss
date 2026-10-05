@@ -1,0 +1,60 @@
+.layout {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+mat-slider {
+  display: block;
+  width: calc(100% - 16px);
+  margin-inline: 8px;
+}
+
+.viewport {
+  height: 480px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-medium);
+  background: var(--mat-sys-surface);
+}
+
+.vrow {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 2fr) minmax(0, 1fr) 70px 70px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  box-sizing: border-box;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #fff;
+  font: 600 12px/1 var(--app-mono);
+}
+
+.name {
+  font: var(--mat-sys-body-large);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.city,
+.id {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.score {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}

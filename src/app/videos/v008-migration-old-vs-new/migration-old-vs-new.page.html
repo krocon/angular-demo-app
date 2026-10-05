@@ -1,0 +1,39 @@
+<app-demo-page num="008" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="compare">
+    <section class="demo-card" aria-labelledby="old-title">
+      <h3 id="old-title">Reactive Forms <span class="tag old">before</span></h3>
+      <app-reactive-order-form />
+      <div class="demo-row">
+        <app-metric-tile label="Lines of code" [value]="reactiveLines" />
+        <app-metric-tile label="Subscriptions" [value]="reactive().subscriptions" />
+        <app-metric-tile label="Type safety" value="partial" trend="getRawValue(), casts" />
+      </div>
+    </section>
+    <section class="demo-card" aria-labelledby="new-title">
+      <h3 id="new-title">Signal Forms <span class="tag new">after</span></h3>
+      <app-signal-order-form />
+      <div class="demo-row">
+        <app-metric-tile label="Lines of code" [value]="signalLines" />
+        <app-metric-tile label="Subscriptions" [value]="signals().subscriptions" />
+        <app-metric-tile label="Type safety" value="full" trend="typed field tree" />
+      </div>
+    </section>
+  </div>
+  <p class="demo-hint" aria-live="polite">
+    Both forms run side by side in the same app – old and new coexist.
+    @if (sameTotal()) {
+      Same input, same total.
+    }
+  </p>
+  <aside class="strategy" aria-labelledby="strategy-title">
+    <mat-icon aria-hidden="true">route</mat-icon>
+    <div>
+      <h3 id="strategy-title">Migration strategy</h3>
+      <ul>
+        <li>New features: start with Signal Forms right away.</li>
+        <li>Existing forms: migrate those with many derived values and subscriptions first.</li>
+        <li>No manual subscriptions → no leaks, and everything is zoneless-ready.</li>
+      </ul>
+    </div>
+  </aside>
+</app-demo-page>

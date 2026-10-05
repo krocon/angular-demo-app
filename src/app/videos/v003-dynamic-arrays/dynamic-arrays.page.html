@@ -1,0 +1,122 @@
+<app-demo-page num="003" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="layout">
+    <form class="demo-card demo-stack" novalidate aria-labelledby="book-title">
+      <h3 id="book-title">Address book</h3>
+      <mat-form-field appearance="outline">
+        <mat-label>Owner</mat-label>
+        <input matInput [formField]="book.owner" />
+        @if (book.owner().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+
+      <p class="summary" aria-live="polite">
+        <strong>{{ invalidRows() }} of {{ rows() }}</strong> rows invalid · form valid:
+        <strong>{{ book().valid() }}</strong>
+        @if (book.addresses().errors()[0]; as e) {
+          · <span class="error">{{ e.message }}</span>
+        }
+      </p>
+
+      <ol class="rows" cdkDropList (cdkDropListDropped)="drop($event)" aria-label="Addresses">
+        @for (
+          address of book.addresses;
+          track address;
+          let i = $index, first = $first, last = $last
+        ) {
+          <li class="row" cdkDrag [class.invalid]="address().invalid()">
+            <div class="row-head">
+              <button
+                mat-icon-button
+                type="button"
+                cdkDragHandle
+                [attr.aria-label]="'Drag address ' + (i + 1)"
+              >
+                <mat-icon>drag_indicator</mat-icon>
+              </button>
+              <strong>#{{ i + 1 }}</strong>
+              @if (address().invalid()) {
+                <span class="badge">{{ address().errorSummary().length }} error(s)</span>
+              }
+              <span class="spacer"></span>
+              <button
+                mat-icon-button
+                type="button"
+                (click)="moveBy(i, -1)"
+                [disabled]="first"
+                [attr.aria-label]="'Move address ' + (i + 1) + ' up'"
+              >
+                <mat-icon>arrow_upward</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                type="button"
+                (click)="moveBy(i, 1)"
+                [disabled]="last"
+                [attr.aria-label]="'Move address ' + (i + 1) + ' down'"
+              >
+                <mat-icon>arrow_downward</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                type="button"
+                (click)="duplicate(i)"
+                [attr.aria-label]="'Duplicate address ' + (i + 1)"
+              >
+                <mat-icon>content_copy</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                type="button"
+                (click)="remove(i)"
+                [attr.aria-label]="'Remove address ' + (i + 1)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            <div class="fields">
+              <mat-form-field appearance="outline" class="street">
+                <mat-label>Street</mat-label>
+                <input matInput [formField]="address.street" />
+                @if (address.street().errors()[0]; as e) {
+                  <mat-error>{{ e.message }}</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="zip">
+                <mat-label>ZIP</mat-label>
+                <input matInput [formField]="address.zip" inputmode="numeric" />
+                @if (address.zip().errors()[0]; as e) {
+                  <mat-error>{{ e.message }}</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>City</mat-label>
+                <input matInput [formField]="address.city" />
+                @if (address.city().errors()[0]; as e) {
+                  <mat-error>{{ e.message }}</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Country</mat-label>
+                <mat-select [formField]="address.country">
+                  @for (country of countries; track country) {
+                    <mat-option [value]="country">{{ country }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </li>
+        } @empty {
+          <li class="empty">No addresses – add one.</li>
+        }
+      </ol>
+      <div class="demo-row">
+        <button mat-flat-button type="button" (click)="add()">
+          <mat-icon>add</mat-icon>Add address
+        </button>
+        <button mat-stroked-button type="button" (click)="showErrors()">Show all errors</button>
+      </div>
+    </form>
+    <app-state-inspector title="model() – a plain array" [value]="model()" />
+  </div>
+</app-demo-page>

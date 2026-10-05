@@ -1,0 +1,49 @@
+@use '@angular/material' as mat;
+
+// Loaded on demand by video 010 (angular.json: "inject": false). Theme variants are compiled
+// ahead of time – one class per level – and switched at runtime on the preview container.
+
+// Density is compiled ahead of time – one class per level, switched at runtime.
+.density--1 {
+  @include mat.theme(
+    (
+      density: -1,
+    )
+  );
+}
+.density--2 {
+  @include mat.theme(
+    (
+      density: -2,
+    )
+  );
+}
+.density--3 {
+  @include mat.theme(
+    (
+      density: -3,
+    )
+  );
+}
+
+// Fonts are typography tokens – also compiled ahead of time and switched by class.
+.font-system {
+  @include mat.theme(
+    (
+      typography: (
+        plain-family: system-ui,
+        brand-family: system-ui,
+      ),
+    )
+  );
+}
+.font-serif {
+  @include mat.theme(
+    (
+      typography: (
+        plain-family: Georgia,
+        brand-family: Georgia,
+      ),
+    )
+  );
+}

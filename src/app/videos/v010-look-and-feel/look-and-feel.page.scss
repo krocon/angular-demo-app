@@ -1,0 +1,98 @@
+@use '@angular/material' as mat;
+
+// Reusable SCSS: component overrides via the official *-overrides mixins – no deep selectors.
+.brand-buttons {
+  @include mat.button-overrides(
+    (
+      filled-container-shape: 6px,
+      filled-label-text-transform: uppercase,
+      filled-label-text-tracking: 0.08em,
+      outlined-container-shape: 6px,
+    )
+  );
+}
+
+.playground {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--mat-sys-outline-variant);
+    cursor: pointer;
+
+    &[aria-pressed='true'] {
+      border-color: var(--mat-sys-on-surface);
+      outline: 2px solid var(--mat-sys-on-surface);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.color-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  input[type='color'] {
+    width: 48px;
+    height: 32px;
+    border: none;
+    background: none;
+    padding: 0;
+  }
+}
+
+mat-slider {
+  display: block;
+  width: calc(100% - 16px);
+  margin-inline: 8px;
+}
+
+.preview {
+  padding: 20px;
+  border-radius: var(--mat-sys-corner-large);
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  border: 1px solid var(--mat-sys-outline-variant);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tokens {
+  width: 100%;
+  border-collapse: collapse;
+  font: 12.5px/1.6 var(--app-mono);
+
+  th,
+  td {
+    text-align: start;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+  }
+}
+
+.chip-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-inline-end: 6px;
+  border: 1px solid var(--mat-sys-outline-variant);
+}

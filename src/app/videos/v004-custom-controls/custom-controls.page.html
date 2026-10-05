@@ -1,0 +1,43 @@
+<app-demo-page num="004" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="demo-grid">
+    <form class="demo-card demo-stack" novalidate aria-labelledby="review-title">
+      <h3 id="review-title">Product review</h3>
+      <mat-form-field appearance="outline">
+        <mat-label>Title</mat-label>
+        <input matInput [formField]="review.title" />
+        @if (review.title().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+
+      <app-star-rating label="Your rating" [formField]="review.rating" />
+
+      <mat-slide-toggle [checked]="ratingLocked()" (change)="ratingLocked.set($event.checked)">
+        Disable rating (schema: <code>disabled(…, {{ '{' }} when {{ '}' }})</code>)
+      </mat-slide-toggle>
+
+      <app-tag-input label="Tags (max 5)" [formField]="review.tags" />
+
+      <mat-form-field appearance="outline">
+        <mat-label>Comment</mat-label>
+        <textarea matInput rows="3" [formField]="review.comment"></textarea>
+        @if (review.comment().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="demo-row">
+        <button mat-flat-button type="button" (click)="submit()">Submit review</button>
+        <span class="demo-hint" aria-live="polite">valid: {{ review().valid() }}</span>
+      </div>
+    </form>
+
+    <div class="demo-stack">
+      <app-state-inspector title="model()" [value]="model()" />
+      <app-state-inspector
+        title="review.rating() – what the control receives"
+        [value]="ratingState()"
+      />
+    </div>
+  </div>
+</app-demo-page>

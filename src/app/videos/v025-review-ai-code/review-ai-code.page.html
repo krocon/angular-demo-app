@@ -1,0 +1,58 @@
+<app-demo-page num="025" [snippets]="snippets">
+  <div class="demo-row examples">
+    @for (example of examples; track example.label; let i = $index) {
+      <button mat-stroked-button type="button" (click)="load(i)">{{ example.label }}</button>
+    }
+  </div>
+  <div class="layout">
+    <section class="demo-card demo-stack" aria-labelledby="input-title">
+      <h3 id="input-title">AI-generated code</h3>
+      <textarea
+        #editor
+        spellcheck="false"
+        wrap="off"
+        aria-label="Code to review"
+        [value]="code()"
+        (input)="code.set(editor.value)"
+      ></textarea>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="result-title">
+      <h3 id="result-title">Review</h3>
+      <div class="demo-row" aria-live="polite">
+        <app-metric-tile label="Modernity" [value]="score() + '/10'" />
+        <app-metric-tile label="High" [value]="counts().high" />
+        <app-metric-tile label="Medium" [value]="counts().medium" />
+        <app-metric-tile label="Low" [value]="counts().low" />
+      </div>
+      <ul class="findings">
+        @for (f of findings(); track $index) {
+          <li [class]="f.severity">
+            <span class="sev">{{ f.severity }}</span>
+            <div>
+              <strong>Line {{ f.line }}: {{ f.message }}</strong>
+              <span class="fix"><mat-icon aria-hidden="true">build</mat-icon>{{ f.fix }}</span>
+            </div>
+          </li>
+        } @empty {
+          <li class="clean">
+            <mat-icon aria-hidden="true">verified</mat-icon> No outdated patterns found.
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+
+  <section class="demo-card rules" aria-labelledby="rules-title">
+    <h3 id="rules-title">Give your assistant rules</h3>
+    <ul>
+      <li>
+        <code>ng new my-app --ai-config=claude-code</code> writes the official best practices (this
+        project has <code>CLAUDE.md</code>).
+      </li>
+      <li>Unknown API? Check angular.dev before trusting it – models hallucinate APIs.</li>
+      <li>Connect the Angular CLI MCP server so the assistant can look things up itself:</li>
+    </ul>
+    <app-code-viewer file=".mcp.json" language="json" [code]="mcpConfig" />
+  </section>
+</app-demo-page>

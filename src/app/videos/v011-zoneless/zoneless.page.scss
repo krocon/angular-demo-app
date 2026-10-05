@@ -1,0 +1,28 @@
+.status {
+  margin-bottom: 16px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--mat-sys-corner-full);
+  background: var(--mat-sys-surface-container-high);
+  font: var(--mat-sys-label-large);
+
+  &.ok mat-icon {
+    color: var(--app-ok);
+  }
+}
+
+.counters {
+  :is(app-plain-counter, app-signal-counter) {
+    text-align: center;
+  }
+}
+
+.rules {
+  margin-top: 16px;
+  padding-inline-start: 18px;
+}

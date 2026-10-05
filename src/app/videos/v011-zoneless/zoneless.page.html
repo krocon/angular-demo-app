@@ -1,0 +1,29 @@
+<app-demo-page num="011" [snippets]="snippets">
+  <div class="demo-row status">
+    <span class="badge" [class.ok]="!zoneLoaded">
+      <mat-icon aria-hidden="true">{{ zoneLoaded ? 'warning' : 'check_circle' }}</mat-icon>
+      zone.js loaded: <strong>{{ zoneLoaded ? 'yes' : 'no' }}</strong>
+    </span>
+    <span class="badge"> App renders (afterEveryRender): <strong #renders>0</strong> </span>
+    <button mat-stroked-button type="button" (click)="running.set(!running())">
+      <mat-icon>{{ running() ? 'pause' : 'play_arrow' }}</mat-icon>
+      {{ running() ? 'Pause timers' : 'Resume timers' }}
+    </button>
+  </div>
+
+  <div class="demo-grid counters">
+    <app-plain-counter [running]="running()" />
+    <app-signal-counter [running]="running()" />
+  </div>
+
+  <ul class="demo-hint rules">
+    <li>
+      The left counter <strong>is</strong> incremented every second – its view just isn't refreshed.
+    </li>
+    <li>
+      Clicking its button is a template event → Angular marks the view dirty and it catches up.
+    </li>
+    <li>The right counter re-renders on every signal change – only its own view, nothing else.</li>
+    <li>New input values (Pause/Resume) also trigger a check of both children.</li>
+  </ul>
+</app-demo-page>

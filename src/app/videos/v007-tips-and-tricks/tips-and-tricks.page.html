@@ -1,0 +1,177 @@
+<app-demo-page num="007" [snippets]="snippets">
+  <mat-accordion multi>
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header>
+        <mat-panel-title>1 · Type your model with an interface</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="demo-grid">
+        <div class="demo-stack">
+          <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput [formField]="customer.name" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput [formField]="customer.email" />
+          </mat-form-field>
+          <p class="demo-hint">
+            <code>Customer</code> has optional <code>company?</code> and <code>vatId?</code>. The
+            backend payload type is derived with <code>Omit&lt;…&gt;</code>; a typo like
+            <code>customer.emial</code> fails at compile time.
+          </p>
+        </div>
+        <app-state-inspector title="toPayload(model())" [value]="payload()" />
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>2 · disabled / readonly / hidden in the schema</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="demo-grid">
+        <div class="demo-stack">
+          <mat-form-field appearance="outline">
+            <mat-label>Billing name</mat-label>
+            <input matInput [formField]="checkout.billingName" />
+          </mat-form-field>
+          <mat-checkbox [formField]="checkout.differentShipping">
+            Ship to a different address
+          </mat-checkbox>
+          @if (!checkout.shipping().hidden()) {
+            <fieldset class="shipping">
+              <legend>Shipping address</legend>
+              <mat-form-field appearance="outline">
+                <mat-label>Street</mat-label>
+                <input matInput [formField]="checkout.shipping.street" />
+                @if (checkout.shipping.street().errors()[0]; as e) {
+                  <mat-error>{{ e.message }}</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>City</mat-label>
+                <input matInput [formField]="checkout.shipping.city" />
+                @if (checkout.shipping.city().errors()[0]; as e) {
+                  <mat-error>{{ e.message }}</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Country (readonly)</mat-label>
+                <input matInput [formField]="checkout.shipping.country" />
+              </mat-form-field>
+            </fieldset>
+          }
+          <mat-checkbox [formField]="checkout.express">Express delivery</mat-checkbox>
+          @for (reason of checkout.express().disabledReasons(); track reason.message) {
+            <p class="demo-hint">Disabled: {{ reason.message }}</p>
+          }
+        </div>
+        <app-state-inspector
+          title="checkout()"
+          [value]="{
+            errors: checkout().errorSummary().length,
+            shippingHidden: checkout.shipping().hidden(),
+          }"
+          [flags]="{
+            valid: checkout().valid(),
+            'shipping hidden': checkout.shipping().hidden(),
+            'country readonly': checkout.shipping.country().readonly(),
+          }"
+        />
+      </div>
+      <p class="demo-hint">
+        Proof: while the address is hidden, its empty required fields do not count – the form is
+        valid. Tick the checkbox and it becomes invalid.
+      </p>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>3 · Debounce only the async validator</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="demo-stack">
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            [formField]="signup.username"
+            (input)="keystrokes.set(keystrokes() + 1)"
+          />
+          @if (signup.username().pending()) {
+            <mat-progress-spinner
+              matSuffix
+              diameter="20"
+              mode="indeterminate"
+              aria-label="Checking"
+            />
+          }
+          @if (signup.username().errors()[0]; as e) {
+            <mat-error>{{ e.message }}</mat-error>
+          }
+        </mat-form-field>
+        <div class="demo-row">
+          <app-metric-tile label="Sync checks (instant)" [value]="keystrokes()" />
+          <app-metric-tile label="HTTP checks (600 ms debounce)" [value]="asyncChecks()" />
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>4 · submit() touches everything, runs only when valid</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="demo-grid">
+        <form class="demo-stack" novalidate (submit)="$event.preventDefault(); sendContact()">
+          <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput [formField]="contact.name" />
+            @if (contact.name().errors()[0]; as e) {
+              <mat-error>{{ e.message }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput [formField]="contact.email" />
+            @if (contact.email().errors()[0]; as e) {
+              <mat-error>{{ e.message }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Message</mat-label>
+            <textarea matInput rows="2" [formField]="contact.message"></textarea>
+            @if (contact.message().errors()[0]; as e) {
+              <mat-error>{{ e.message }}</mat-error>
+            }
+          </mat-form-field>
+          <button mat-flat-button type="submit">Send (try it empty)</button>
+        </form>
+        <app-event-log
+          title="submit()"
+          [entries]="submitLog.entries()"
+          (cleared)="submitLog.clear()"
+        />
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>5 · UI flags in computed(), not in the model</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="demo-grid">
+        <div class="demo-stack">
+          <mat-form-field appearance="outline">
+            <mat-label>Newsletter email</mat-label>
+            <input matInput [formField]="newsletter.email" />
+          </mat-form-field>
+          <button mat-flat-button type="button" [disabled]="!canSubmit()" (click)="subscribe()">
+            {{ isSaving() ? 'Saving…' : 'Subscribe' }}
+          </button>
+        </div>
+        <app-state-inspector
+          title="model vs. UI flags"
+          [value]="{ model: newsletterModel() }"
+          [flags]="{ isSaving: isSaving(), canSubmit: canSubmit() }"
+        />
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</app-demo-page>

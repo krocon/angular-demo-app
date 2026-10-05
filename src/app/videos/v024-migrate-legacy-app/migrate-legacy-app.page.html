@@ -1,0 +1,67 @@
+<app-demo-page num="024" [snippets]="snippets">
+  <section class="demo-card demo-stack" aria-labelledby="planner-title">
+    <h3 id="planner-title">Upgrade planner</h3>
+    <div class="demo-row">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Current version</mat-label>
+        <mat-select [value]="from()" (selectionChange)="from.set($event.value)">
+          @for (v of versions; track v) {
+            <mat-option [value]="v">Angular {{ v }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-checkbox [checked]="withMaterial()" (change)="withMaterial.set($event.checked)">
+        Includes Angular Material / CDK
+      </mat-checkbox>
+      <button mat-button type="button" (click)="reset()">Reset progress</button>
+    </div>
+    <div class="progress" aria-live="polite">
+      <mat-progress-bar
+        mode="determinate"
+        [value]="progress().percent"
+        aria-label="Migration progress"
+      />
+      <span>{{ progress().done }} / {{ progress().total }} done ({{ progress().percent }} %)</span>
+    </div>
+    <ol class="steps">
+      @for (step of steps(); track step.id) {
+        <li [class.done]="isDone(step.id)">
+          <mat-checkbox [checked]="isDone(step.id)" (change)="toggle(step.id, $event.checked)">
+            <strong>→ {{ step.version }}</strong>
+          </mat-checkbox>
+          <code>{{ step.command }}</code>
+          @if (step.note) {
+            <span class="demo-hint">{{ step.note }}</span>
+          }
+        </li>
+      }
+    </ol>
+    <p class="demo-hint">
+      Follow angular.dev/update-guide for each hop. After every step: build, test, commit.
+    </p>
+  </section>
+
+  <section class="demo-card" aria-labelledby="migrations-title">
+    <h3 id="migrations-title">Modernize with schematics</h3>
+    <mat-stepper orientation="vertical" [linear]="false">
+      @for (m of migrations; track m.id) {
+        <mat-step [label]="m.title">
+          <app-code-viewer file="terminal" language="bash" [code]="m.command" />
+          <div class="ba">
+            <app-code-viewer file="before" [code]="m.before" />
+            <app-code-viewer file="after" [code]="m.after" />
+          </div>
+          <div class="demo-row" role="group" [attr.aria-label]="m.title + ' checklist'">
+            @for (c of checklist; track c) {
+              <mat-checkbox
+                [checked]="isDone(m.id + ':' + c)"
+                (change)="toggle(m.id + ':' + c, $event.checked)"
+                >{{ c }}</mat-checkbox
+              >
+            }
+          </div>
+        </mat-step>
+      }
+    </mat-stepper>
+  </section>
+</app-demo-page>

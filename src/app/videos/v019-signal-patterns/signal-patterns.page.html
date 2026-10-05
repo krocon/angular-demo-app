@@ -1,0 +1,124 @@
+<app-demo-page num="019" [snippets]="snippets">
+  <div class="cards">
+    <section class="demo-card demo-stack" aria-labelledby="c-computed">
+      <h3 id="c-computed">computed()</h3>
+      <div class="demo-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="narrow">
+          <mat-label>Price</mat-label>
+          <input matInput type="number" #p [value]="price()" (input)="price.set(+p.value)" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="narrow">
+          <mat-label>Qty</mat-label>
+          <input matInput type="number" #q [value]="quantity()" (input)="quantity.set(+q.value)" />
+        </mat-form-field>
+      </div>
+      <p class="result">
+        Total: <strong>{{ total() }}</strong>
+      </p>
+      <code class="line">total = computed(() =&gt; price() * quantity())</code>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="c-linked">
+      <h3 id="c-linked">linkedSignal()</h3>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Category (source)</mat-label>
+        <mat-select [value]="category()" (selectionChange)="category.set($event.value)">
+          @for (c of categories; track c) {
+            <mat-option [value]="c">{{ c }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Selected (override me)</mat-label>
+        <mat-select [value]="selected()" (selectionChange)="selected.set($event.value)">
+          @for (o of options(); track o) {
+            <mat-option [value]="o">{{ o }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <p class="demo-hint">
+        Pick an item, then change the category: the selection resets to the first option.
+      </p>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="c-equal">
+      <h3 id="c-equal">The <code>equal</code> option</h3>
+      <p class="result">point = {{ point().x }}, {{ point().y }}</p>
+      <div class="demo-row">
+        <button mat-stroked-button type="button" (click)="setSamePoint()">Set same values</button>
+        <button mat-stroked-button type="button" (click)="movePoint()">x + 1</button>
+      </div>
+      @let a = plainDownstream();
+      @let b = equalDownstream();
+      <div class="demo-row">
+        <app-metric-tile label="Downstream runs (default)" [value]="a" />
+        <app-metric-tile label="… with custom equal" [value]="b" />
+      </div>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="c-effect">
+      <h3 id="c-effect">effect() → localStorage</h3>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Accent (persisted)</mat-label>
+        <mat-select [value]="accent()" (selectionChange)="accent.set($event.value)">
+          <mat-option value="violet">Violet</mat-option>
+          <mat-option value="teal">Teal</mat-option>
+          <mat-option value="orange">Orange</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <p class="demo-hint">
+        Reload the page – the value survives. The effect only writes; it never derives state.
+      </p>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="c-stream">
+      <h3 id="c-stream">resource({{ '{' }} stream {{ '}' }}) – WebSocket ticker</h3>
+      <mat-slide-toggle [checked]="streaming()" (change)="streaming.set($event.checked)"
+        >Connected</mat-slide-toggle
+      >
+      <p class="result" aria-live="off">
+        status: <code>{{ ticker.status() }}</code>
+        @if (lastTick(); as t) {
+          · {{ t.symbol }} <strong>{{ t.price }}</strong>
+        }
+      </p>
+      <div class="spark" aria-hidden="true">
+        @if (ticker.hasValue()) {
+          @for (t of ticker.value(); track t.at) {
+            <span [style.height.%]="(t.price - 85) * 3"></span>
+          }
+        }
+      </div>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="c-delay">
+      <h3 id="c-delay">
+        debounced() vs. throttleTime <app-api-status-chip status="experimental" />
+      </h3>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Type quickly</mat-label>
+        <input matInput #typed (input)="type(typed.value)" />
+      </mat-form-field>
+      <dl class="values">
+        <dt>debounced()</dt>
+        <dd>"{{ debouncedQuery.value() }}"</dd>
+        <dt>throttleTime</dt>
+        <dd>"{{ throttledQuery() }}"</dd>
+      </dl>
+      <div class="demo-row">
+        <app-metric-tile label="Keystrokes" [value]="keystrokes()" />
+        <app-metric-tile label="debounced" [value]="debouncedUpdates()" />
+        <app-metric-tile label="throttled" [value]="throttledUpdates()" />
+      </div>
+    </section>
+  </div>
+
+  <section class="demo-card advisor" aria-labelledby="c-advisor">
+    <h3 id="c-advisor">Which pattern do I need?</h3>
+    <app-pattern-advisor />
+    <p class="demo-hint">
+      Remember: resources are reads, not a cache. For SSR give them an <code>id</code> so the value
+      travels via TransferState.
+    </p>
+  </section>
+</app-demo-page>

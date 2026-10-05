@@ -1,0 +1,74 @@
+<app-demo-page num="018" [snippets]="snippets">
+  <div class="demo-grid">
+    <section class="demo-card demo-stack" aria-labelledby="todo-title">
+      <h3 id="todo-title">Todos (root store)</h3>
+      <form
+        class="add"
+        (submit)="$event.preventDefault(); store.add(title.value); title.value = ''"
+      >
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>What needs to be done?</mat-label>
+          <input matInput #title />
+        </mat-form-field>
+        <button mat-flat-button type="submit">Add</button>
+      </form>
+      <mat-chip-listbox
+        aria-label="Filter"
+        [value]="store.filter()"
+        (change)="setFilter($event.value)"
+      >
+        @for (f of filters; track f) {
+          <mat-chip-option [value]="f">{{ f }}</mat-chip-option>
+        }
+      </mat-chip-listbox>
+      <ul class="todos">
+        @for (todo of store.visible(); track todo.id) {
+          <li [class.done]="todo.done">
+            <mat-checkbox [checked]="todo.done" (change)="store.toggle(todo.id)">{{
+              todo.title
+            }}</mat-checkbox>
+            <button
+              mat-icon-button
+              type="button"
+              (click)="store.remove(todo.id)"
+              [attr.aria-label]="'Delete ' + todo.title"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </li>
+        } @empty {
+          <li class="demo-hint">Nothing here.</li>
+        }
+      </ul>
+      <div class="demo-row">
+        <span aria-live="polite"
+          ><strong>{{ store.remaining() }}</strong> remaining</span
+        >
+        <button mat-button type="button" (click)="store.clearCompleted()">Clear completed</button>
+        <button mat-button type="button" (click)="store.reset()">Reset</button>
+      </div>
+    </section>
+    <app-state-inspector title="store.state() (read-only)" [value]="store.state()" />
+  </div>
+
+  <h3 class="section-title">Global vs. feature state</h3>
+  <div class="widgets">
+    <app-todo-widget title="Widget A – root store" />
+    <app-todo-widget title="Widget B – root store" />
+    <app-isolated-todo-widget title="Widget C – own providers: [TodoStore]" />
+  </div>
+  <p class="demo-hint">A, B and the list above share one instance. C is independent.</p>
+
+  <mat-card appearance="outlined" class="ngrx">
+    <mat-card-header
+      ><mat-card-title>When NgRx / NgRx SignalStore?</mat-card-title></mat-card-header
+    >
+    <mat-card-content>
+      <ul>
+        <li>Large teams that need strict conventions and DevTools time-travel.</li>
+        <li>Complex effects, entity collections, undo/redo or event-driven architectures.</li>
+        <li>For most features, a signal in a service is enough.</li>
+      </ul>
+    </mat-card-content>
+  </mat-card>
+</app-demo-page>

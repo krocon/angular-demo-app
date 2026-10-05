@@ -1,0 +1,91 @@
+@let v = video();
+<article class="page" [attr.aria-labelledby]="'video-title-' + v.num">
+  <header class="header">
+    <p class="eyebrow">Video {{ v.num }}</p>
+    <h1 [id]="'video-title-' + v.num">{{ v.title }}</h1>
+    <div class="meta">
+      <mat-chip-set aria-label="Category">
+        <mat-chip>{{ v.category }}</mat-chip>
+      </mat-chip-set>
+      <app-api-status-chip [status]="v.apiStatus" />
+    </div>
+    <p class="summary">{{ v.summary }}</p>
+  </header>
+
+  <section class="key-points" aria-labelledby="key-points-title">
+    <h2 id="key-points-title">In this video</h2>
+    <ol>
+      @for (point of v.keyPoints; track point) {
+        <li>{{ point }}</li>
+      }
+    </ol>
+  </section>
+
+  <mat-tab-group
+    class="tabs"
+    mat-stretch-tabs="false"
+    mat-align-tabs="start"
+    preserveContent
+    [selectedIndex]="selectedIndex()"
+    (selectedIndexChange)="selectTab($event)"
+  >
+    <mat-tab label="Live demo">
+      <div class="tab-body">
+        <ng-content />
+      </div>
+    </mat-tab>
+    <mat-tab label="Code">
+      <ng-template matTabContent>
+        <div class="tab-body code">
+          @for (snippet of snippets(); track snippet.file) {
+            <app-code-viewer
+              [code]="snippet.code"
+              [file]="snippet.file"
+              [language]="snippet.language"
+              [note]="snippet.note"
+            />
+          } @empty {
+            <p>No snippets for this video.</p>
+          }
+        </div>
+      </ng-template>
+    </mat-tab>
+    @if (beforeAfter(); as pair) {
+      <mat-tab label="Before / After">
+        <ng-template matTabContent>
+          <div class="tab-body">
+            <app-before-after [before]="pair.before" [after]="pair.after" />
+          </div>
+        </ng-template>
+      </mat-tab>
+    }
+  </mat-tab-group>
+
+  <aside class="takeaway" aria-label="Takeaway">
+    <mat-icon aria-hidden="true">lightbulb</mat-icon>
+    <p><strong>Remember:</strong> {{ v.takeaway }}</p>
+  </aside>
+
+  <nav class="pager" aria-label="Previous and next video">
+    @if (prev(); as p) {
+      <a mat-stroked-button [routerLink]="link(p)" class="prev">
+        <mat-icon>arrow_back</mat-icon>
+        <span class="pager-label"
+          ><small>Previous · {{ p.num }}</small
+          >{{ p.title }}</span
+        >
+      </a>
+    } @else {
+      <span></span>
+    }
+    @if (next(); as n) {
+      <a mat-stroked-button [routerLink]="link(n)" class="next">
+        <span class="pager-label"
+          ><small>Next · {{ n.num }}</small
+          >{{ n.title }}</span
+        >
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </a>
+    }
+  </nav>
+</article>

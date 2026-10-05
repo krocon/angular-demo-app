@@ -1,0 +1,27 @@
+// View transition pseudo-elements live outside every component, so their styles MUST be global
+// (view encapsulation would never match them). Duration and easing come from CSS variables that
+// video 014 sets on :root.
+:root {
+  --app-vt-duration: 350ms;
+  --app-vt-easing: cubic-bezier(0.2, 0, 0, 1);
+}
+
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: var(--app-vt-duration);
+  animation-timing-function: var(--app-vt-easing);
+}
+
+// Keep the toolbar and sidenav still while the content crossfades.
+.app-toolbar {
+  view-transition-name: app-toolbar;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}

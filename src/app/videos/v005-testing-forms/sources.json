@@ -1,0 +1,11 @@
+{
+  "includeSpecs": true,
+  "extra": {
+    "angular.json (test target)": "../../../../angular.json",
+    "package.json (scripts)": "../../../../package.json"
+  },
+  "jsonPick": {
+    "angular.json (test target)": ["projects", "angular22-video-demos", "architect", "test"],
+    "package.json (scripts)": ["scripts"]
+  }
+}

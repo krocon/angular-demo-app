@@ -1,0 +1,26 @@
+.patterns {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  align-items: start;
+}
+
+.async mat-slider {
+  display: block;
+  width: calc(100% - 16px);
+  margin-inline: 8px;
+}
+
+.ok {
+  color: var(--app-ok);
+}
+
+.status {
+  margin: 0;
+  min-height: 1.4em;
+  font: var(--mat-sys-label-large);
+}
+
+.actions {
+  margin-top: 16px;
+}

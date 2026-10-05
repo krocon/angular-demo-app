@@ -1,0 +1,122 @@
+<app-demo-page num="010" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="playground">
+    <section class="demo-card demo-stack" aria-labelledby="controls-title">
+      <h3 id="controls-title">Theme controls</h3>
+
+      <span class="demo-hint" id="primary-label">Primary color</span>
+      <div class="swatches" role="group" aria-labelledby="primary-label">
+        @for (color of presets; track color) {
+          <button
+            type="button"
+            [style.background]="color"
+            [attr.aria-pressed]="primary() === color"
+            [attr.aria-label]="'Primary ' + color"
+            (click)="primary.set(color)"
+          ></button>
+        }
+      </div>
+      <label class="color-row">
+        <input #picker type="color" [value]="primary()" (input)="primary.set(picker.value)" />
+        <code>{{ primary() }}</code>
+      </label>
+
+      <label class="demo-hint" for="radius">Corner radius (medium): {{ radius() }} px</label>
+      <mat-slider min="0" max="28" step="1" discrete>
+        <input id="radius" matSliderThumb [value]="radius()" (valueChange)="radius.set($event)" />
+      </mat-slider>
+
+      <label class="demo-hint" for="density">Density: {{ density() }}</label>
+      <mat-slider min="-3" max="0" step="1" discrete>
+        <input
+          id="density"
+          matSliderThumb
+          [value]="density()"
+          (valueChange)="density.set($event)"
+        />
+      </mat-slider>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Font</mat-label>
+        <mat-select [value]="fontIndex()" (selectionChange)="fontIndex.set($event.value)">
+          @for (font of fonts; track font.label; let i = $index) {
+            <mat-option [value]="i">{{ font.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-button-toggle-group
+        aria-label="Color scheme"
+        [value]="scheme()"
+        (change)="scheme.set($event.value)"
+      >
+        <mat-button-toggle value="light">Light</mat-button-toggle>
+        <mat-button-toggle value="dark">Dark</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <mat-slide-toggle [checked]="brandButtons()" (change)="brandButtons.set($event.checked)">
+        Apply <code>mat.button-overrides</code> (SCSS)
+      </mat-slide-toggle>
+    </section>
+
+    <div class="demo-stack">
+      <section
+        #preview
+        [class]="previewClass()"
+        [style]="previewStyle()"
+        aria-label="Theme preview"
+      >
+        <div class="demo-row">
+          <button mat-flat-button type="button">Filled</button>
+          <button mat-button matButton="tonal" type="button">Tonal</button>
+          <button mat-stroked-button type="button">Outlined</button>
+          <button mat-button type="button">Text</button>
+        </div>
+        <mat-card appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Card title</mat-card-title>
+            <mat-card-subtitle>Corner radius comes from --mat-sys-corner-medium</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+              <mat-label>Form field</mat-label>
+              <input matInput value="Design tokens" />
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+        <mat-chip-set aria-label="Chips">
+          <mat-chip highlighted>Signals</mat-chip>
+          <mat-chip>Zoneless</mat-chip>
+          <mat-chip>Material 3</mat-chip>
+        </mat-chip-set>
+        <mat-slide-toggle checked>Slide toggle</mat-slide-toggle>
+        <mat-tab-group mat-stretch-tabs="false" animationDuration="0">
+          <mat-tab label="First">Tab content</mat-tab>
+          <mat-tab label="Second">More content</mat-tab>
+        </mat-tab-group>
+        <button mat-stroked-button type="button" (click)="openSnackbar()">Open snackbar</button>
+      </section>
+
+      <table class="tokens" aria-label="Current token values in the preview">
+        <thead>
+          <tr>
+            <th scope="col">Token</th>
+            <th scope="col">Value in preview</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (token of tokenValues(); track token.name) {
+            <tr>
+              <td>{{ token.name }}</td>
+              <td>
+                @if (isColor(token.value)) {
+                  <span class="chip-swatch" [style.background]="token.value"></span>
+                }
+                {{ token.value }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</app-demo-page>

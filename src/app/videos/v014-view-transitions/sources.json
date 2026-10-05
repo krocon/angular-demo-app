@@ -1,0 +1,7 @@
+{
+  "extra": {
+    "styles/view-transitions.scss": "../../../styles/view-transitions.scss",
+    "app.config.ts": "../../app.config.ts",
+    "view-transition-settings.store.ts": "../../core/view-transitions/view-transition-settings.store.ts"
+  }
+}

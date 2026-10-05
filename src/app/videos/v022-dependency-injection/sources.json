@@ -1,0 +1,6 @@
+{
+  "extra": {
+    "app.config.ts": "../../app.config.ts",
+    "core/config/app-config.store.ts": "../../core/config/app-config.store.ts"
+  }
+}

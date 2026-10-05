@@ -1,0 +1,51 @@
+<app-demo-page num="017" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="demo-grid">
+    <section class="demo-card demo-stack" aria-labelledby="parent-title">
+      <h3 id="parent-title">Parent controls</h3>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>name (input.required)</mat-label>
+        <input matInput #nameField [value]="name()" (input)="name.set(nameField.value)" />
+      </mat-form-field>
+      <mat-slide-toggle [checked]="highlighted()" (change)="highlighted.set($event.checked)">
+        highlighted (input + booleanAttribute)
+      </mat-slide-toggle>
+      <div class="demo-row">
+        <button mat-stroked-button type="button" (click)="addTag()">Add projected tag</button>
+        <button mat-stroked-button type="button" (click)="removeTag()" [disabled]="!tags().length">
+          Remove tag
+        </button>
+        <button mat-stroked-button type="button" (click)="card().focusInput()">
+          Focus input (viewChild)
+        </button>
+      </div>
+      <p class="shared">
+        Shared rating via <code>[(rating)]</code>: <strong>{{ rating() }}</strong>
+        <button mat-button type="button" (click)="rating.set(0)">Reset from parent</button>
+      </p>
+      <app-event-log title="Outputs & effect" [entries]="log.entries()" (cleared)="log.clear()" />
+    </section>
+
+    <div class="demo-stack">
+      <app-user-card
+        [name]="name()"
+        [highlighted]="highlighted()"
+        [(rating)]="rating"
+        (selected)="onSelected($event)"
+      >
+        @for (tag of tags(); track tag) {
+          <span [appTag]="tag">{{ tag }}</span>
+        }
+      </app-user-card>
+      <section class="demo-card" aria-labelledby="migrate-title">
+        <h3 id="migrate-title">Migrate existing code</h3>
+        <ul class="commands">
+          @for (cmd of migrations; track cmd) {
+            <li>
+              <code>{{ cmd }}</code>
+            </li>
+          }
+        </ul>
+      </section>
+    </div>
+  </div>
+</app-demo-page>

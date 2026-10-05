@@ -1,0 +1,69 @@
+<app-demo-page num="016" [snippets]="snippets">
+  <div class="layout">
+    <div class="sections">
+      <section class="demo-card" aria-labelledby="d4">
+        <h3 id="d4">4 · <code>&#64;defer (when showReport())</code></h3>
+        <mat-slide-toggle [checked]="showReport()" (change)="showReport.set($event.checked)">
+          Show report
+        </mat-slide-toggle>
+        @defer (when showReport()) {
+          <app-report-panel />
+        } @placeholder {
+          <p class="placeholder">The report chunk loads once the toggle is on.</p>
+        }
+      </section>
+
+      <section class="demo-card" aria-labelledby="d2">
+        <h3 id="d2">2 · Rich text editor <code>&#64;defer (on interaction)</code></h3>
+        @defer (on interaction) {
+          <app-rich-text-editor />
+        } @placeholder {
+          <button mat-stroked-button type="button">
+            <mat-icon>edit</mat-icon>Click to load the editor
+          </button>
+        } @error {
+          <p role="alert">Could not load the editor.</p>
+        }
+      </section>
+
+      <section class="demo-card" aria-labelledby="d3">
+        <h3 id="d3">3 · Help <code>&#64;defer (on hover; prefetch on idle)</code></h3>
+        @defer (on hover; prefetch on idle) {
+          <app-help-content />
+        } @placeholder {
+          <div class="placeholder hover" tabindex="0">Hover (or focus) me for help</div>
+        }
+      </section>
+
+      <p class="spacer demo-hint" aria-hidden="true">
+        ↓ scroll down – the chart loads when it enters the viewport ↓
+      </p>
+
+      <section class="demo-card" aria-labelledby="d1">
+        <h3 id="d1">1 · Heavy chart <code>&#64;defer (on viewport)</code></h3>
+        @defer (on viewport) {
+          <app-heavy-chart />
+        } @placeholder (minimum 500ms) {
+          <div class="placeholder chart">Chart placeholder (≥ 500 ms)</div>
+        } @loading (after 100ms; minimum 1s) {
+          <div class="placeholder chart">
+            <mat-progress-spinner mode="indeterminate" diameter="32" aria-label="Loading chart" />
+          </div>
+        } @error {
+          <p role="alert">Could not load the chart.</p>
+        }
+      </section>
+    </div>
+
+    <aside class="demo-stack side">
+      <app-event-log title="Chunk log" [entries]="log.entries()" (cleared)="log.clear()" />
+      <div class="demo-card hint">
+        <h3>Check the Network tab</h3>
+        <p class="demo-hint">
+          Open DevTools → Network → JS and trigger each block. Every component arrives as its own
+          lazy chunk (see README → “Deferred chunks”).
+        </p>
+      </div>
+    </aside>
+  </div>
+</app-demo-page>

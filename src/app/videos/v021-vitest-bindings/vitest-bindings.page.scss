@@ -1,0 +1,14 @@
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font: var(--mat-sys-label-large);
+}
+
+h4 {
+  margin: 16px 0 8px;
+  font: var(--mat-sys-title-small);
+  overflow-wrap: anywhere;
+}

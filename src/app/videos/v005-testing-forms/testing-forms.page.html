@@ -1,0 +1,58 @@
+<app-demo-page num="005" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="demo-grid">
+    <section class="demo-card demo-stack" aria-labelledby="sut-title">
+      <h3 id="sut-title">System under test</h3>
+      <app-login-form (loggedIn)="onLogin($event)" />
+      <app-event-log title="Submitted" [entries]="log.entries()" (cleared)="log.clear()" />
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="scenarios-title">
+      <div class="head">
+        <h3 id="scenarios-title">Test scenarios</h3>
+        <button mat-flat-button type="button" (click)="runAll()">
+          <mat-icon>play_arrow</mat-icon>Run all
+        </button>
+      </div>
+      <p class="demo-hint" aria-live="polite">
+        @if (ran()) {
+          {{ passed() }} / {{ ran() }} passed – the same functions run in
+          <code>login-form.spec.ts</code> under <code>ng test</code>.
+        } @else {
+          Each scenario builds a fresh form, sets the model and reads the state – synchronously.
+        }
+      </p>
+      <ul class="scenarios">
+        @for (scenario of scenarios; track scenario.name) {
+          @let result = results()[scenario.name];
+          <li [class.pass]="result?.passed" [class.fail]="result && !result.passed">
+            <mat-icon
+              class="state"
+              [attr.aria-label]="result ? (result.passed ? 'passed' : 'failed') : 'not run'"
+            >
+              {{ result ? (result.passed ? 'check_circle' : 'cancel') : 'radio_button_unchecked' }}
+            </mat-icon>
+            <div class="text">
+              <strong>{{ scenario.name }}</strong>
+              <span class="demo-hint">expect: {{ scenario.expectation }}</span>
+              @if (result) {
+                <code>actual: {{ format(result.actual) }} · {{ result.durationMs }} ms</code>
+              }
+            </div>
+            <button
+              mat-button
+              type="button"
+              (click)="run(scenario)"
+              [attr.aria-label]="'Run ' + scenario.name"
+            >
+              Run
+            </button>
+          </li>
+        }
+      </ul>
+      <p class="demo-hint">
+        CI: <code>npm test</code> runs <code>ng test --no-watch</code> in Node with jsdom – no
+        browser, container-ready.
+      </p>
+    </section>
+  </div>
+</app-demo-page>

@@ -1,0 +1,79 @@
+<app-demo-page num="027" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="demo-grid">
+    <section class="demo-card demo-stack" aria-labelledby="compare-title">
+      <h3 id="compare-title"><code>(input)</code> vs. <code>(input.debounce.500)</code></h3>
+      <label class="field">
+        <span>Plain <code>(input)</code></span>
+        <input type="search" (input)="onPlain()" />
+      </label>
+      <label class="field">
+        <span>Plugin <code>(input.debounce.500)</code></span>
+        <input type="search" (input.debounce.500)="onDebounced($event)" />
+      </label>
+      <div class="demo-row" aria-live="polite">
+        <app-metric-tile label="(input) handler calls" [value]="plainCalls()" />
+        <app-metric-tile label="debounced handler calls" [value]="debouncedCalls()" />
+      </div>
+      <p class="demo-hint">Last debounced value: "{{ debouncedValue() }}"</p>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="variants-title">
+      <h3 id="variants-title">Different delays</h3>
+      <label class="demo-hint" for="variant"
+        >Event name: <code>(input.debounce.{{ options[variantIndex()] }})</code></label
+      >
+      <mat-slider min="0" max="2" step="1" discrete [displayWith]="labelFor">
+        <input
+          id="variant"
+          matSliderThumb
+          [value]="variantIndex()"
+          (valueChange)="variantIndex.set($event)"
+        />
+      </mat-slider>
+      <!-- event names are static in the template – one prepared field per delay -->
+      @switch (options[variantIndex()]) {
+        @case (200) {
+          <input type="search" aria-label="Debounce 200 ms" (input.debounce.200)="onVariant()" />
+        }
+        @case (500) {
+          <input type="search" aria-label="Debounce 500 ms" (input.debounce.500)="onVariant()" />
+        }
+        @default {
+          <input type="search" aria-label="Debounce 1000 ms" (input.debounce.1000)="onVariant()" />
+        }
+      }
+      <app-metric-tile label="handler calls" [value]="variantCalls()" />
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="builtin-title">
+      <h3 id="builtin-title">Built-in key event plugin</h3>
+      <input
+        type="text"
+        aria-label="Try Enter, Shift+Tab or Ctrl+K"
+        placeholder="Try Enter, Shift+Tab, Ctrl+K"
+        (keydown.enter)="onKey('enter', $event)"
+        (keydown.shift.tab)="onKey('shift.tab', $event)"
+        (keydown.control.k)="onKey('control.k', $event)"
+      />
+      <app-event-log title="Key events" [entries]="log.entries()" (cleared)="log.clear()" />
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="leak-title">
+      <h3 id="leak-title">Leak check</h3>
+      <mat-slide-toggle [checked]="showProbe()" (change)="showProbe.set($event.checked)">
+        Render a component with 3 plugin listeners
+      </mat-slide-toggle>
+      @if (showProbe()) {
+        <app-leak-probe />
+      }
+      <div class="demo-row" aria-live="polite">
+        <app-metric-tile label="Active plugin listeners" [value]="stats.total()" />
+        <app-metric-tile label="debounce" [value]="stats.active()['debounce'] ?? 0" />
+        <app-metric-tile label="throttle" [value]="stats.active()['throttle'] ?? 0" />
+      </div>
+      <p class="demo-hint">
+        Toggle off: the cleanup function returned by addEventListener() runs and the count drops.
+      </p>
+    </section>
+  </div>
+</app-demo-page>

@@ -1,0 +1,134 @@
+<app-demo-page num="002" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <form class="patterns" novalidate aria-label="Validation patterns">
+    <section class="demo-card demo-stack" aria-labelledby="p1">
+      <h3 id="p1">1 · Built-in validators</h3>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Username</mat-label>
+        <input matInput [formField]="signUp.username" />
+        <mat-hint>minLength 3 · pattern /^[a-z0-9_]+$/</mat-hint>
+        @if (signUp.username().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" [formField]="signUp.email" />
+        @if (signUp.email().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Age</mat-label>
+        <input matInput type="number" [formField]="signUp.age" />
+        <mat-hint>min 18 · max 120</mat-hint>
+        @if (signUp.age().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="p2">
+      <h3 id="p2">2 · Conditional with <code>when</code></h3>
+      <mat-checkbox [formField]="signUp.isCompany">I'm signing up for a company</mat-checkbox>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Company name</mat-label>
+        <input matInput [formField]="signUp.companyName" />
+        <mat-hint>required: {{ signUp.companyName().required() }}</mat-hint>
+        @if (signUp.companyName().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="p3">
+      <h3 id="p3">3 · Cross-field with <code>validate</code> + <code>valueOf</code></h3>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" [formField]="signUp.password" autocomplete="new-password" />
+        @if (signUp.password().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Confirm password</mat-label>
+        <input
+          matInput
+          type="password"
+          [formField]="signUp.confirmPassword"
+          autocomplete="new-password"
+        />
+        @if (signUp.confirmPassword().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+    </section>
+
+    <section class="demo-card demo-stack" aria-labelledby="p4">
+      <h3 id="p4">4 · Custom rule function</h3>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Nickname</mat-label>
+        <input matInput [formField]="signUp.nickname" />
+        <mat-hint>Reserved: {{ reserved }}</mat-hint>
+        @if (signUp.nickname().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+      <p class="demo-hint">
+        <code>noReservedWords(value)</code> returns
+        <code>{{ '{' }} kind, message {{ '}' }}</code> or <code>null</code> – a plain, easily
+        testable function.
+      </p>
+    </section>
+
+    <section class="demo-card demo-stack async" aria-labelledby="p5">
+      <h3 id="p5">5 · Async <code>validateHttp</code> with debounce</h3>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Handle</mat-label>
+        <input matInput [formField]="signUp.handle" (input)="onHandleInput()" />
+        @if (signUp.handle().pending()) {
+          <mat-progress-spinner
+            matSuffix
+            mode="indeterminate"
+            diameter="20"
+            aria-label="Checking availability"
+          />
+        } @else if (signUp.handle().valid() && signUp.handle().value()) {
+          <mat-icon matSuffix class="ok" aria-label="Available">check_circle</mat-icon>
+        }
+        <mat-hint>Taken: admin, root, angular, nerd, test, signal, user</mat-hint>
+        @if (signUp.handle().errors()[0]; as e) {
+          <mat-error>{{ e.message }}</mat-error>
+        }
+      </mat-form-field>
+      <p class="status" aria-live="polite">{{ handleStatus() }}</p>
+      <label for="debounce" class="demo-hint">Debounce: {{ debounceMs() }} ms</label>
+      <mat-slider min="0" max="1000" step="50" discrete>
+        <input
+          id="debounce"
+          matSliderThumb
+          [value]="debounceMs()"
+          (valueChange)="debounceMs.set($event)"
+        />
+      </mat-slider>
+      <div class="demo-row">
+        <app-metric-tile label="Keystrokes" [value]="keystrokes()" />
+        <app-metric-tile label="Requests" [value]="requestsSent()" />
+        <app-metric-tile label="Cancelled" [value]="requestsCancelled()" />
+      </div>
+      <p class="demo-hint">
+        Type fast: with debounce only the last value is checked. Stale responses are cancelled by
+        the underlying resource and never applied.
+      </p>
+    </section>
+  </form>
+
+  <div class="demo-row actions">
+    <button mat-flat-button type="button" (click)="validateAll()">Show all errors</button>
+    <button mat-stroked-button type="button" (click)="reset()">Reset</button>
+    <span class="demo-hint" aria-live="polite">
+      Form valid: <strong>{{ signUp().valid() }}</strong> · pending:
+      <strong>{{ signUp().pending() }}</strong> · errors:
+      <strong>{{ signUp().errorSummary().length }}</strong>
+    </span>
+  </div>
+</app-demo-page>

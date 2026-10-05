@@ -1,0 +1,9 @@
+{
+  "extra": {
+    "app.config.ts": "../../app.config.ts",
+    "angular.json (build options – no polyfills)": "../../../../angular.json"
+  },
+  "jsonPick": {
+    "angular.json (build options – no polyfills)": ["projects", "angular22-video-demos", "architect", "build", "options"]
+  }
+}

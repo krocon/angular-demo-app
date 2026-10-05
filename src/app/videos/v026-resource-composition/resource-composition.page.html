@@ -1,0 +1,91 @@
+<app-demo-page num="026" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="controls demo-card">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>User</mat-label>
+      <mat-select [value]="userId()" (selectionChange)="userId.set($event.value)">
+        @for (id of userIds; track id) {
+          <mat-option [value]="id">User #{{ id }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <p class="demo-hint">
+      Raise latency and the error rate in the Network panel to watch status propagation.
+    </p>
+  </div>
+
+  <div class="cards">
+    <section class="demo-card status-card" aria-labelledby="user-title">
+      <h3 id="user-title">1 · userResource</h3>
+      <span class="chip" [class]="user.status()">{{ user.status() }}</span>
+      @if (user.isLoading()) {
+        <mat-progress-spinner mode="indeterminate" diameter="24" aria-label="Loading user" />
+      }
+      @if (user.error(); as e) {
+        <p class="error" role="alert">{{ e.message }}</p>
+      } @else if (user.hasValue()) {
+        <p>
+          <strong>{{ user.value().name }}</strong
+          ><br />{{ user.value().email }}
+        </p>
+        <p class="demo-hint">companyId: {{ user.value().companyId }}</p>
+      }
+    </section>
+
+    <mat-icon class="arrow" aria-hidden="true">arrow_forward</mat-icon>
+
+    <section class="demo-card status-card" aria-labelledby="company-title">
+      <h3 id="company-title">2 · companyResource <small>(chain)</small></h3>
+      <span class="chip" [class]="company.status()">{{ company.status() }}</span>
+      @if (company.isLoading()) {
+        <mat-progress-spinner mode="indeterminate" diameter="24" aria-label="Loading company" />
+      }
+      @if (company.error(); as e) {
+        <p class="error" role="alert">Inherited / own error: {{ e.message }}</p>
+      } @else if (company.hasValue()) {
+        <p>
+          <strong>{{ company.value().name }}</strong
+          ><br />{{ company.value().city }}
+        </p>
+      }
+    </section>
+  </div>
+
+  <h3 class="section-title">Keep previous data while reloading</h3>
+  <mat-slide-toggle [checked]="keepPrevious()" (change)="keepPrevious.set($event.checked)">
+    Use the snapshot variant (linkedSignal + resourceFromSnapshots)
+  </mat-slide-toggle>
+  <div class="compare">
+    <section class="demo-card" aria-labelledby="flicker-title">
+      <h4 id="flicker-title">Plain resource</h4>
+      <div class="panel" [class.empty]="!company.hasValue()">
+        @if (company.hasValue()) {
+          {{ company.value().name }} · {{ company.value().employees }} employees
+        } @else {
+          <span class="demo-hint">… (empty while loading)</span>
+        }
+      </div>
+    </section>
+    <section class="demo-card" aria-labelledby="smooth-title">
+      <h4 id="smooth-title">
+        {{ keepPrevious() ? 'Snapshot variant' : 'Snapshot variant (off)' }}
+      </h4>
+      @let smooth = shown();
+      <div class="panel" [class.stale]="smooth.status() === 'reloading'">
+        @if (smooth.hasValue()) {
+          {{ smooth.value().name }} · {{ smooth.value().employees }} employees
+          @if (smooth.status() === 'reloading') {
+            <span class="demo-hint">(updating…)</span>
+          }
+        } @else {
+          <span class="demo-hint">… (empty while loading)</span>
+        }
+      </div>
+    </section>
+  </div>
+
+  <div class="demo-grid inspectors">
+    <app-state-inspector title="user.snapshot()" [value]="userSnapshot()" />
+    <app-state-inspector title="company.snapshot()" [value]="companySnapshot()" />
+    <app-state-inspector title="smoothCompany.snapshot()" [value]="smoothSnapshot()" />
+  </div>
+</app-demo-page>

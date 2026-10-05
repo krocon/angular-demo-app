@@ -1,0 +1,17 @@
+.shipping {
+  display: grid;
+  gap: 0 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-medium);
+  padding: 8px 12px 0;
+  margin: 0;
+
+  legend {
+    padding: 0 4px;
+    font: var(--mat-sys-label-large);
+  }
+}
+
+mat-expansion-panel .demo-grid {
+  margin-bottom: 8px;
+}

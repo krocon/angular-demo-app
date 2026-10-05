@@ -1,0 +1,173 @@
+<app-demo-page num="009" [snippets]="snippets">
+  <div class="controls demo-card">
+    <mat-button-toggle-group
+      #modeGroup
+      aria-label="Rendering mode"
+      [value]="mode()"
+      (change)="setMode($event.value)"
+    >
+      <mat-button-toggle value="plain">Plain &#64;for</mat-button-toggle>
+      <mat-button-toggle value="paged">mat-table + paginator</mat-button-toggle>
+      <mat-button-toggle value="virtual">CDK virtual scroll</mat-button-toggle>
+      <mat-button-toggle value="gui">GUI Expert Table</mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Rows</mat-label>
+      <mat-select [value]="rowCount()" (selectionChange)="setRows($event.value)">
+        @for (n of rowOptions; track n) {
+          <mat-option [value]="n">{{ n.toLocaleString('en') }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Columns</mat-label>
+      <mat-select [value]="columnCount()" (selectionChange)="setColumns($event.value)">
+        <mat-option [value]="5">5</mat-option>
+        <mat-option [value]="10">10</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="demo-row metrics" aria-live="polite">
+    <app-metric-tile
+      label="Rows × columns"
+      [value]="(rowCount() * columnCount()).toLocaleString('en')"
+      unit="cells"
+    />
+    <app-metric-tile label="DOM nodes in table" [value]="domNodes().toLocaleString('en')" />
+    <app-metric-tile label="Render time" [value]="renderMs()" unit="ms" />
+    <app-metric-tile label="FPS" [value]="fps.fps()" trend="scroll to test" />
+  </div>
+
+  <div #tableHost class="table-host">
+    @switch (mode()) {
+      @case ('plain') {
+        <div class="scroll-box">
+          <table class="plain">
+            <thead>
+              <tr>
+                @for (col of columns(); track col.key) {
+                  <th scope="col">{{ col.label }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of rows(); track row.id) {
+                <tr>
+                  @for (col of columns(); track col.key) {
+                    <td>{{ row[col.key] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+      @case ('paged') {
+        <div class="scroll-box paged">
+          <table mat-table [dataSource]="dataSource()" matSort>
+            @for (col of columns(); track col.key) {
+              <ng-container [matColumnDef]="col.key">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col.label }}</th>
+                <td mat-cell *matCellDef="let row">{{ row[col.key] }}</td>
+              </ng-container>
+            }
+            <tr mat-header-row *matHeaderRowDef="columnKeys(); sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnKeys()"></tr>
+          </table>
+        </div>
+        <mat-paginator
+          [pageSizeOptions]="[25, 50, 100]"
+          (page)="measureAfterRender()"
+          aria-label="Select page"
+        />
+      }
+      @case ('virtual') {
+        <div class="virtual-tools">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Filter name or city</mat-label>
+            <input matInput #f [value]="filter()" (input)="filter.set(f.value)" />
+          </mat-form-field>
+          <span class="demo-hint"
+            >{{ virtualRows().length.toLocaleString('en') }} rows after filter</span
+          >
+        </div>
+        <div class="grid-head" role="row" [style.grid-template-columns]="gridTemplate()">
+          @for (col of columns(); track col.key) {
+            <button
+              type="button"
+              role="columnheader"
+              (click)="toggleSort(col.key)"
+              [attr.aria-sort]="
+                sortKey() === col.key
+                  ? sortDirection() === 'asc'
+                    ? 'ascending'
+                    : 'descending'
+                  : 'none'
+              "
+            >
+              {{ col.label }}
+              @if (sortKey() === col.key) {
+                <mat-icon aria-hidden="true">{{
+                  sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward'
+                }}</mat-icon>
+              }
+            </button>
+          }
+        </div>
+        <cdk-virtual-scroll-viewport
+          class="viewport"
+          [itemSize]="rowHeight"
+          (scrolledIndexChange)="measureAfterRender()"
+          role="table"
+          aria-label="Virtual table"
+        >
+          <div
+            *cdkVirtualFor="let row of virtualRows(); trackBy: trackById"
+            class="grid-row"
+            role="row"
+            [style.grid-template-columns]="gridTemplate()"
+          >
+            @for (col of columns(); track col.key) {
+              <span role="cell">{{ row[col.key] }}</span>
+            }
+          </div>
+        </cdk-virtual-scroll-viewport>
+      }
+      @case ('gui') {
+        @defer (on immediate) {
+          <app-guiexpert-table-mode
+            [rows]="rows()"
+            [columns]="columns()"
+            (ready)="measureAfterRender()"
+          />
+        } @loading (minimum 300ms) {
+          <p class="demo-hint">Loading GUI Expert Table chunk…</p>
+        }
+      }
+    }
+  </div>
+
+  <mat-card appearance="outlined" class="info">
+    <mat-card-header>
+      <mat-card-title>Grid frameworks virtualize both directions</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+        CDK virtual scroll only virtualizes rows, needs a fixed row height and leaves sorting and
+        filtering to you. Grid frameworks virtualize rows <em>and</em> columns:
+      </p>
+      <ul>
+        <li>
+          <a href="https://www.ag-grid.com/" target="_blank" rel="noopener">ag-Grid</a> –
+          feature-rich, community + enterprise editions.
+        </li>
+        <li>
+          <a href="https://gui.expert/" target="_blank" rel="noopener">GUI Expert Table</a> – MIT,
+          renders tables with more than 1 million rows; used above as the 4th mode.
+        </li>
+      </ul>
+      <p class="demo-hint">Full disclosure: GUI Expert is the author's project.</p>
+    </mat-card-content>
+  </mat-card>
+</app-demo-page>

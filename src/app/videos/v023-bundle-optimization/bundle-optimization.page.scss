@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+section {
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--mat-sys-body-medium);
+
+  th,
+  td {
+    text-align: start;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+}
+
+.intl th {
+  width: 40%;
+  font-weight: normal;
+}
+
+h4 {
+  margin: 16px 0 4px;
+  font: var(--mat-sys-title-small);
+}

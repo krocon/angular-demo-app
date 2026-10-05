@@ -1,0 +1,99 @@
+<app-demo-page num="013" [snippets]="snippets">
+  <div class="layout">
+    <section class="demo-card demo-stack" aria-labelledby="tune-title">
+      <h3 id="tune-title">Data & tuning</h3>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Filter (name or city)</mat-label>
+        <input matInput #filter [value]="query()" (input)="query.set(filter.value)" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Sort</mat-label>
+        <mat-select [value]="sort()" (selectionChange)="sort.set($event.value)">
+          <mat-option value="id">ID</mat-option>
+          <mat-option value="name">Name</mat-option>
+          <mat-option value="city">City</mat-option>
+          <mat-option value="score-desc">Score (desc)</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <label class="demo-hint" for="item-size">itemSize: {{ itemSize() }} px</label>
+      <mat-slider min="32" max="96" step="4" discrete>
+        <input
+          id="item-size"
+          matSliderThumb
+          [value]="itemSize()"
+          (valueChange)="itemSize.set($event)"
+        />
+      </mat-slider>
+      <label class="demo-hint" for="min-buffer">minBufferPx: {{ minBufferPx() }}</label>
+      <mat-slider min="0" max="1000" step="50" discrete>
+        <input
+          id="min-buffer"
+          matSliderThumb
+          [value]="minBufferPx()"
+          (valueChange)="minBufferPx.set($event)"
+        />
+      </mat-slider>
+      <label class="demo-hint" for="max-buffer">maxBufferPx: {{ effectiveMaxBuffer() }}</label>
+      <mat-slider min="0" max="2000" step="50" discrete>
+        <input
+          id="max-buffer"
+          matSliderThumb
+          [value]="maxBufferPx()"
+          (valueChange)="maxBufferPx.set($event)"
+        />
+      </mat-slider>
+
+      <div class="demo-row">
+        <button mat-stroked-button type="button" (click)="scrollTo(0)">Top</button>
+        <button mat-stroked-button type="button" (click)="scrollTo(50000)">50,000</button>
+        <button mat-stroked-button type="button" (click)="scrollTo(visible().length - 1)">
+          End
+        </button>
+      </div>
+      <p class="demo-hint">
+        Compare with all rows in the DOM in <a routerLink="/videos/009-big-tables">video 009</a>.
+      </p>
+    </section>
+
+    <div class="demo-stack">
+      <div class="demo-row" aria-live="polite">
+        <app-metric-tile label="Entries" [value]="total.toLocaleString('en')" />
+        <app-metric-tile label="After filter" [value]="visible().length.toLocaleString('en')" />
+        <app-metric-tile label="Rows in DOM" [value]="renderedRows()" />
+        <app-metric-tile
+          label="First visible index"
+          [value]="firstVisible().toLocaleString('en')"
+        />
+        <app-metric-tile label="FPS" [value]="fps.fps()" />
+      </div>
+      <cdk-virtual-scroll-viewport
+        class="viewport"
+        [itemSize]="itemSize()"
+        [minBufferPx]="minBufferPx()"
+        [maxBufferPx]="effectiveMaxBuffer()"
+        (scrolledIndexChange)="onScrolledIndex($event)"
+        aria-label="People"
+        role="list"
+      >
+        <div
+          *cdkVirtualFor="let person of visible(); trackBy: trackById"
+          class="vrow"
+          role="listitem"
+          [style.height.px]="itemSize()"
+        >
+          <span
+            class="avatar"
+            [style.background]="'hsl(' + person.hue + ' 55% 45%)'"
+            aria-hidden="true"
+            >{{ person.initials }}</span
+          >
+          <span class="name">{{ person.name }}</span>
+          <span class="city">{{ person.city }}</span>
+          <span class="score">{{ person.score }}</span>
+          <span class="id">#{{ person.id }}</span>
+        </div>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </div>
+</app-demo-page>

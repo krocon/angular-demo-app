@@ -1,0 +1,7 @@
+{
+  "extra": {
+    "core/events/timing-event.plugins.ts": "../../core/events/timing-event.plugins.ts",
+    "core/events/event-plugin-stats.store.ts": "../../core/events/event-plugin-stats.store.ts",
+    "app.config.ts": "../../app.config.ts"
+  }
+}

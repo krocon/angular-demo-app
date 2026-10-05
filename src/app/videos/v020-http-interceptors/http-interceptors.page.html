@@ -1,0 +1,85 @@
+<app-demo-page num="020" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <ol class="chain" aria-label="Interceptor order">
+    @for (step of chain; track step; let last = $last) {
+      <li>
+        <span>{{ step }}</span>
+        @if (!last) {
+          <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+        }
+      </li>
+    }
+  </ol>
+
+  <div class="layout">
+    <section class="demo-card demo-stack" aria-labelledby="actions-title">
+      <h3 id="actions-title">Requests</h3>
+      <p class="auth" aria-live="polite">
+        <mat-icon aria-hidden="true">{{ auth.isLoggedIn() ? 'lock_open' : 'lock' }}</mat-icon>
+        {{ auth.isLoggedIn() ? 'Logged in – token: ' + auth.token() : 'Logged out – no token' }}
+        <button mat-stroked-button type="button" (click)="toggleLogin()">
+          {{ auth.isLoggedIn() ? 'Logout' : 'Login' }}
+        </button>
+      </p>
+      <div class="buttons">
+        <button mat-flat-button type="button" (click)="getOk()">GET ok</button>
+        <button mat-stroked-button type="button" (click)="get401()">GET 401</button>
+        <button mat-stroked-button type="button" (click)="get500()">GET 500</button>
+        <button mat-stroked-button type="button" (click)="getWithoutToken()">
+          GET without token
+        </button>
+        <button mat-stroked-button type="button" (click)="getSilently()">GET silently</button>
+      </div>
+      <p class="demo-hint">
+        Active requests (loading interceptor): <strong>{{ loading.active() }}</strong
+        >. "GET silently" does not move the progress bar; 401 clears the token; 5xx offers a Retry.
+      </p>
+      <ul class="results" aria-live="polite">
+        @for (r of results(); track $index) {
+          <li [class.ok]="r.ok">
+            <mat-icon aria-hidden="true">{{ r.ok ? 'check_circle' : 'error' }}</mat-icon>
+            <strong>{{ r.label }}</strong>
+            <code>{{ r.detail }}</code>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="demo-card" aria-labelledby="inspector-title">
+      <h3 id="inspector-title">Request inspector (as the server sees it)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Request</th>
+              <th scope="col">Status</th>
+              <th scope="col">Headers</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of requests(); track r.id) {
+              <tr>
+                <td>
+                  <code>{{ r.method }} {{ r.url }}</code>
+                </td>
+                <td>{{ r.cancelled ? 'cancelled' : (r.status ?? '…') }}</td>
+                <td class="headers">{{ headerList(r.headers) }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="3" class="demo-hint">Fire a request.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <h3>Logging interceptor (client side)</h3>
+      <ol class="trace">
+        @for (t of trace.entries().slice(0, 6); track t.id) {
+          <li>
+            <code>{{ t.method }} {{ t.url }}</code> → {{ t.outcome }} in {{ t.durationMs }} ms
+          </li>
+        }
+      </ol>
+    </section>
+  </div>
+</app-demo-page>

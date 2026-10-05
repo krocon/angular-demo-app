@@ -1,0 +1,52 @@
+<app-demo-page num="001" [snippets]="snippets" [beforeAfter]="beforeAfter">
+  <div class="demo-grid">
+    <form class="demo-card demo-stack" novalidate aria-labelledby="reg-title">
+      <h3 id="reg-title">Registration</h3>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput [formField]="registration.name" autocomplete="name" />
+        @if (registration.name().errors()[0]; as error) {
+          <mat-error>{{ error.message }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" [formField]="registration.email" autocomplete="email" />
+        @if (registration.email().errors()[0]; as error) {
+          <mat-error>{{ error.message }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Age</mat-label>
+        <input matInput type="number" [formField]="registration.age" />
+        @if (registration.age().errors()[0]; as error) {
+          <mat-error>{{ error.message }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-checkbox [formField]="registration.newsletter">Subscribe to the newsletter</mat-checkbox>
+
+      <p class="demo-hint" aria-live="polite">
+        {{ registration().valid() ? 'The form is valid.' : errorCount() + ' validation error(s).' }}
+      </p>
+
+      <div class="demo-row">
+        <button mat-flat-button type="button" (click)="fillExample()">
+          Set model programmatically
+        </button>
+        <button mat-stroked-button type="button" (click)="reset()">Reset</button>
+      </div>
+    </form>
+
+    <div class="demo-stack">
+      <app-state-inspector title="model()" [value]="model()" [flags]="flags()" />
+      <p class="demo-hint">
+        No subscriptions: the inspector reads <code>model()</code> and
+        <code>registration().valid()</code> directly as signals.
+      </p>
+    </div>
+  </div>
+</app-demo-page>

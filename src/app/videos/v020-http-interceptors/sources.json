@@ -1,0 +1,10 @@
+{
+  "extra": {
+    "core/http/auth.interceptor.ts": "../../core/http/auth.interceptor.ts",
+    "core/http/error.interceptor.ts": "../../core/http/error.interceptor.ts",
+    "core/http/loading.interceptor.ts": "../../core/http/loading.interceptor.ts",
+    "core/http/logging.interceptor.ts": "../../core/http/logging.interceptor.ts",
+    "core/http/http-context.ts": "../../core/http/http-context.ts",
+    "app.config.ts": "../../app.config.ts"
+  }
+}

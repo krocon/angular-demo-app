@@ -1,0 +1,5 @@
+{
+  "extra": {
+    "theme-playground.scss": "../../../styles/theme-playground.scss"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "extra": {
+    "angular.json (budgets)": "../../../../angular.json",
+    "package.json (scripts)": "../../../../package.json"
+  },
+  "jsonPick": {
+    "angular.json (budgets)": ["projects", "angular22-video-demos", "architect", "build", "configurations", "production", "budgets"],
+    "package.json (scripts)": ["scripts"]
+  }
+}

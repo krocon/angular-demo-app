@@ -1,0 +1,42 @@
+<app-demo-page num="014" [snippets]="snippets">
+  <div class="controls demo-card">
+    <span class="badge" [class.ok]="settings.supported">
+      <mat-icon aria-hidden="true">{{ settings.supported ? 'check_circle' : 'block' }}</mat-icon>
+      Supported in this browser: <strong>{{ settings.supported ? 'yes' : 'no' }}</strong>
+    </span>
+    @if (settings.prefersReducedMotion) {
+      <span class="badge">prefers-reduced-motion: transitions are skipped</span>
+    }
+    <mat-slide-toggle
+      [checked]="settings.enabled()"
+      (change)="settings.enabled.set($event.checked)"
+    >
+      Enable view transitions
+    </mat-slide-toggle>
+    <div class="slider">
+      <label class="demo-hint" for="vt-duration">Duration: {{ duration() }} ms</label>
+      <mat-slider min="100" max="2000" step="50" discrete>
+        <input
+          id="vt-duration"
+          matSliderThumb
+          [value]="duration()"
+          (valueChange)="duration.set($event)"
+        />
+      </mat-slider>
+    </div>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Easing</mat-label>
+      <mat-select [value]="easing()" (selectionChange)="easing.set($event.value)">
+        @for (e of easings; track e.value) {
+          <mat-option [value]="e.value">{{ e.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <span class="demo-hint">
+      Transitions created: {{ settings.created() }} · skipped: {{ settings.skipped() }}
+    </span>
+  </div>
+  <div class="outlet">
+    <router-outlet />
+  </div>
+</app-demo-page>

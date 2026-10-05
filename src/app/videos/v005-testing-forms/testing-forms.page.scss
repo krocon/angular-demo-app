@@ -1,0 +1,51 @@
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.scenarios {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px;
+    border-radius: var(--mat-sys-corner-small);
+    background: var(--mat-sys-surface);
+    border-inline-start: 4px solid var(--mat-sys-outline-variant);
+
+    &.pass {
+      border-color: var(--app-ok);
+      .state {
+        color: var(--app-ok);
+      }
+    }
+
+    &.fail {
+      border-color: var(--mat-sys-error);
+      .state {
+        color: var(--mat-sys-error);
+      }
+    }
+  }
+}
+
+.text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}

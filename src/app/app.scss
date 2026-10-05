@@ -1,0 +1,196 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -48px;
+  z-index: 10;
+  padding: 8px 12px;
+  border-radius: var(--mat-sys-corner-small);
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+
+  &:focus {
+    top: 8px;
+  }
+}
+
+.app-toolbar {
+  gap: 8px;
+  padding-inline: 8px 12px;
+  background: var(--mat-sys-surface-container);
+  position: relative;
+  z-index: 3;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mat-sys-on-surface);
+  text-decoration: none;
+  font: var(--mat-sys-title-medium);
+  white-space: nowrap;
+
+  mat-icon {
+    color: var(--mat-sys-primary);
+  }
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  max-width: 420px;
+  margin-inline-start: auto;
+  padding: 0 12px;
+  height: 40px;
+  border-radius: var(--mat-sys-corner-full);
+  background: var(--mat-sys-surface-container-highest);
+  color: var(--mat-sys-on-surface-variant);
+  min-width: 0;
+
+  &:focus-within {
+    outline: 2px solid var(--mat-sys-primary);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--mat-sys-on-surface);
+    font: var(--mat-sys-body-large);
+  }
+}
+
+.progress {
+  height: 4px;
+  flex: none;
+  overflow: hidden;
+}
+
+// Lightweight indeterminate bar (keeps MatProgressBar out of the initial bundle).
+.progress-bar {
+  height: 100%;
+  background: var(--mat-sys-primary-container);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 35%;
+    background: var(--mat-sys-primary);
+    animation: progress-slide 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+}
+
+@keyframes progress-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+.container {
+  flex: 1;
+}
+
+.sidenav {
+  width: 300px;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.nav {
+  padding: 8px 8px 24px;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.nav-group {
+  margin: 16px 12px 4px;
+  font: var(--mat-sys-title-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 4px 12px;
+  border-radius: var(--mat-sys-corner-full);
+  color: var(--mat-sys-on-surface);
+  text-decoration: none;
+  font: var(--mat-sys-label-large);
+
+  &:hover {
+    background: color-mix(in srgb, var(--mat-sys-on-surface) 8%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: -2px;
+  }
+
+  &.active {
+    background: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+  }
+}
+
+.num {
+  font: 600 12px/1 var(--app-mono);
+  color: var(--mat-sys-primary);
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--app-status-stable);
+
+  &.developer-preview {
+    background: var(--app-status-preview);
+  }
+
+  &.experimental {
+    background: var(--app-status-experimental);
+  }
+}
+
+.no-results {
+  padding: 16px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+main {
+  outline: none;
+  min-height: 100%;
+}
+
+@media (max-width: 599.98px) {
+  .brand-text,
+  .network-label {
+    display: none;
+  }
+}

@@ -1,0 +1,66 @@
+<section class="hero">
+  <p class="eyebrow">YouTube series</p>
+  <h1>Angular 22 – hands-on demos</h1>
+  <p class="lead">
+    One live, interactive demo for each of the {{ total }} videos: Signal Forms, resources, zoneless
+    change detection, view transitions, interceptors, testing with Vitest and more. Every page shows
+    the real code that runs it.
+  </p>
+</section>
+
+<section class="filters" aria-label="Filter videos">
+  <mat-form-field appearance="outline" class="search" subscriptSizing="dynamic">
+    <mat-label>Search</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput #q type="search" [value]="search.query()" (input)="search.query.set(q.value)" />
+  </mat-form-field>
+  <mat-chip-listbox
+    aria-label="Category"
+    [value]="category()"
+    (change)="selectCategory($event.value)"
+  >
+    @for (c of categories; track c) {
+      <mat-chip-option [value]="c">{{ c }}</mat-chip-option>
+    }
+  </mat-chip-listbox>
+</section>
+
+<p class="count" aria-live="polite">{{ videos().length }} of {{ total }} videos</p>
+
+@if (videos().length) {
+  <ul class="grid" aria-label="Videos">
+    @for (video of videos(); track video.num) {
+      <li>
+        <mat-card appearance="outlined" class="card">
+          <mat-card-header>
+            <mat-card-subtitle>Video {{ video.num }}</mat-card-subtitle>
+            <mat-card-title>
+              <h2>{{ video.title }}</h2>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ video.summary }}</p>
+            <div class="chips">
+              <span class="category">{{ video.category }}</span>
+              <app-api-status-chip [status]="video.apiStatus" />
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <a
+              mat-flat-button
+              [routerLink]="link(video)"
+              [attr.aria-label]="'Open demo ' + video.num + ': ' + video.title"
+              >Open demo</a
+            >
+          </mat-card-actions>
+        </mat-card>
+      </li>
+    }
+  </ul>
+} @else {
+  <div class="empty">
+    <mat-icon aria-hidden="true">search_off</mat-icon>
+    <p>No videos match your filters.</p>
+    <button mat-stroked-button type="button" (click)="resetFilters()">Reset filters</button>
+  </div>
+}

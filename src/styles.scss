@@ -1,0 +1,113 @@
+@use '@angular/material' as mat;
+
+// Material 3 theme: azure primary, violet tertiary, light/dark via `color-scheme`.
+html {
+  height: 100%;
+  color-scheme: light dark;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$violet-palette,
+        theme-type: color-scheme,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+
+  // App-level tokens (built on top of the Material system tokens).
+  --app-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --app-status-stable: light-dark(#2e7d32, #81c784);
+  --app-status-preview: light-dark(#b26a00, #ffb74d);
+  --app-status-experimental: light-dark(#c62828, #ef9a9a);
+  --app-ok: light-dark(#2e7d32, #81c784);
+  --app-content-max: 1280px;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+}
+
+a {
+  color: var(--mat-sys-primary);
+}
+
+code {
+  font-family: var(--app-mono);
+  font-size: 0.92em;
+  padding: 1px 4px;
+  border-radius: var(--mat-sys-corner-extra-small);
+  background: var(--mat-sys-surface-container-high);
+}
+
+:focus-visible {
+  outline-color: var(--mat-sys-primary);
+}
+
+// Utility layout classes shared by the demo pages.
+.demo-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  align-items: start;
+}
+
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.demo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.demo-card {
+  padding: 16px;
+  border-radius: var(--mat-sys-corner-large);
+  background: var(--mat-sys-surface-container-low);
+  min-width: 0;
+
+  > h3:first-child,
+  > h2:first-child {
+    margin-top: 0;
+  }
+}
+
+.demo-hint {
+  margin: 0;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
+  }
+}

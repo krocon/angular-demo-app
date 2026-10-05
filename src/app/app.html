@@ -1,0 +1,100 @@
+<a class="skip-link" href="#main">Skip to content</a>
+<mat-toolbar class="app-toolbar">
+  @if (layout.isHandset()) {
+    <button mat-icon-button type="button" (click)="sidenav.toggle()" aria-label="Toggle navigation">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+  <a class="brand" routerLink="/" aria-label="Angular 22 Demos – home">
+    <mat-icon aria-hidden="true">bolt</mat-icon>
+    <span class="brand-text">Angular 22 Demos</span>
+  </a>
+
+  <div class="search" role="search">
+    <mat-icon aria-hidden="true">search</mat-icon>
+    <input
+      #searchInput
+      type="search"
+      placeholder="Search videos  ( / )"
+      aria-label="Search videos by title or tag"
+      [value]="search.query()"
+      (input)="search.query.set(searchInput.value)"
+      (keydown.enter)="onSearchEnter()"
+      (keydown.escape)="search.query.set('')"
+    />
+  </div>
+
+  <button
+    mat-icon-button
+    type="button"
+    (click)="theme.cycle()"
+    [attr.aria-label]="'Theme: ' + theme.mode() + '. Activate to switch.'"
+    [title]="'Theme: ' + theme.mode()"
+  >
+    <mat-icon>{{ themeIcons[theme.mode()] }}</mat-icon>
+  </button>
+
+  <button
+    mat-button
+    type="button"
+    class="network-button"
+    (click)="openNetworkPanel()"
+    [title]="'Network: ' + network.summary()"
+    aria-label="Network settings of the fake backend"
+  >
+    <mat-icon>{{ network.offline() ? 'wifi_off' : 'network_check' }}</mat-icon>
+    <span class="network-label">Network</span>
+  </button>
+</mat-toolbar>
+
+<div class="progress" aria-hidden="true">
+  @if (loading.isLoading()) {
+    <div class="progress-bar"></div>
+  }
+</div>
+<span class="visually-hidden" aria-live="polite">{{ loading.isLoading() ? 'Loading…' : '' }}</span>
+
+<mat-sidenav-container class="container">
+  <mat-sidenav
+    #sidenav
+    [mode]="layout.sidenavMode()"
+    [opened]="!layout.isHandset()"
+    class="sidenav"
+    aria-label="Video navigation"
+  >
+    <nav class="nav">
+      @for (group of groups(); track group.category) {
+        <h3 class="nav-group" [id]="'nav-' + $index">{{ group.category }}</h3>
+        <ul [attr.aria-labelledby]="'nav-' + $index">
+          @for (video of group.videos; track video.num) {
+            <li>
+              <a
+                class="nav-link"
+                [routerLink]="link(video)"
+                routerLinkActive="active"
+                ariaCurrentWhenActive="page"
+                (click)="layout.isHandset() && sidenav.close()"
+              >
+                <span class="num">{{ video.num }}</span>
+                <span class="title">{{ video.title }}</span>
+                <span
+                  class="status-dot"
+                  [class]="video.apiStatus"
+                  [attr.aria-label]="video.apiStatus === 'stable' ? null : video.apiStatus"
+                  [attr.role]="video.apiStatus === 'stable' ? null : 'img'"
+                ></span>
+              </a>
+            </li>
+          }
+        </ul>
+      } @empty {
+        <p class="no-results">No videos match “{{ search.query() }}”.</p>
+      }
+    </nav>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <main id="main" tabindex="-1">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
